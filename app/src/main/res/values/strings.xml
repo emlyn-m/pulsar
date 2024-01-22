@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Pulsar</string>
+    <string name="server_name">emlyn.xyz</string>
+    <string name="server_uptime">Uptime: </string>
+    <string name="server_downtime">Downtime: </string>
+    <string name="discard">Discard</string>
+
+    <string-array name="sevString">
+        <item>emerg</item> <!-- IE: Server unreachable -->
+        <item>alert</item> <!-- IE: Database failure -->
+        <item> </item>
+        <item>error</item> <!-- IE: Parse JNLW fail -->
+        <item>warn</item> <!-- IE: Attempted intrusions, degraded speeds, IP change -->
+        <item> </item>
+        <item>info</item> <!-- IE: JNLW parsed succesfully -->
+    </string-array>
+</resources>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/black">
+
+    <TextView
+        android:id="@+id/discardAlert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="12dp"
+        android:textColor="@color/accent"
+        android:text="@string/discard" />
+
+    <ImageView
+        android:id="@+id/clusterIcon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="20dp"
+        android:background="@color/white" />
+
+    <TextView
+        android:id="@+id/alertSev"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/clusterIcon"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="10sp"
+        android:layout_marginEnd="20dp"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/alertTimestamp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/alertSev"
+        android:textSize="10sp"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@+id/alertSev" />
+
+    <TextView
+        android:id="@+id/alertMsg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:breakStrategy="simple"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toStartOf="@+id/alertTimestamp"
+        android:layout_marginHorizontal="30dp"
+        app:layout_constraintStart_toEndOf="@+id/clusterIcon"
+        app:layout_constraintTop_toTopOf="@+id/clusterIcon" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
