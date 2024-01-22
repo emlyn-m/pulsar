@@ -13,12 +13,14 @@ class Home : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
         // Dummy data for testing alerts
-        val alertDataset = arrayListOf(
-            AlertStruct(0, 0, "Server unresponsive!!", 1705841593000),
+        val initalertDataset = arrayListOf(
+            AlertStruct(0, 0, "Server &<>==unresponsive!!", 1705841593000),
             AlertStruct(0, 0, "Server unresponsive!!", 1705841593000),
             AlertStruct(0, 0, "Server unresponsive!!", 1705841593000),
             AlertStruct(0, 0, "Server unresponsive!!", 1705841593000),
         )
+
+        val alertDataset = AlertStruct.importStructs(AlertStruct.exportStructs(initalertDataset))
 
         // Setup alert RecyclerView
         val alertAdaptor = AlertAdaptor(alertDataset, applicationContext)

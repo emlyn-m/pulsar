@@ -9,9 +9,9 @@
         <item>emerg</item> <!-- IE: Server unreachable -->
         <item>alert</item> <!-- IE: Database failure -->
         <item> </item>
-        <item>error</item> <!-- IE: Parse JNLW fail -->
+        <item>error</item> <!-- IE: Parse Journal fail -->
         <item>warn</item> <!-- IE: Attempted intrusions, degraded speeds, IP change -->
         <item> </item>
-        <item>info</item> <!-- IE: JNLW parsed succesfully -->
+        <item>info</item> <!-- IE: Journal parsed succesfully -->
     </string-array>
 </resources>
