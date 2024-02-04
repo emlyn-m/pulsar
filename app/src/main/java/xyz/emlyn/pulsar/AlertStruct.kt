@@ -32,6 +32,7 @@ class AlertStruct(val icon: Int, val sev: Int, val msg: String, val timestamp: L
 
         fun importStructs(data : String) : ArrayList<AlertStruct> {
             val alertStructs = ArrayList<AlertStruct>()
+            if (data.isEmpty()) { return alertStructs; }
             val entries = data.split("\n")
 
             for (i in entries.indices) {
