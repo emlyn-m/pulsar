@@ -12,6 +12,16 @@ import android.util.Log
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.ColumnInfo
+import androidx.room.Dao
+import androidx.room.Database
+import androidx.room.Delete
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.PrimaryKey
+import androidx.room.Query
+import androidx.room.Room
+import androidx.room.RoomDatabase
 
 class Home : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,12 +29,10 @@ class Home : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
 
-        // Pull existing data from SP
-        // todo: migrate this to proto datastore
+        // Pull existing data from Room API
 
-        val sp = getSharedPreferences("pulsar", Context.MODE_PRIVATE)
-        val alertDataset = AlertStruct.importStructs(sp.getString("alerts", "")!!)
-
+        val db = Room.databaseBuilder(applicationContext, AlertDB::class.java, "alerts").build()
+        val alertDataset = db.alertDao().getAll()
 
         // Setup alert RecyclerView
         val alertAdaptor = AlertAdaptor(alertDataset, applicationContext)
