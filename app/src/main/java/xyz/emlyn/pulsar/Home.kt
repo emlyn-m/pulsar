@@ -2,43 +2,42 @@ package xyz.emlyn.pulsar
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.Service.START_STICKY
-import android.app.job.JobInfo
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.ColumnInfo
-import androidx.room.Dao
-import androidx.room.Database
-import androidx.room.Delete
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.PrimaryKey
-import androidx.room.Query
 import androidx.room.Room
-import androidx.room.RoomDatabase
+import org.jivesoftware.smack.android.AndroidSmackInitializer
+
 
 class Home : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+        // initialize smack
+        AndroidSmackInitializer.initialize(applicationContext);
 
         // Pull existing data from Room API
+        Thread {
+            val db = Room.databaseBuilder(applicationContext, AlertDB::class.java, "alerts").build()
+            db.close()
+            val alertDatasetRaw = db.alertDao().getAll()
+            val alertDataset = ArrayList<Alert>()
+            for (i in alertDatasetRaw.indices) {
+                alertDataset.add(alertDatasetRaw[i])
+            }
 
-        val db = Room.databaseBuilder(applicationContext, AlertDB::class.java, "alerts").build()
-        val alertDataset = db.alertDao().getAll()
-
-        // Setup alert RecyclerView
-        val alertAdaptor = AlertAdaptor(alertDataset, applicationContext)
-        val alertRecyclerView = findViewById<RecyclerView>(R.id.currentAlerts)
-        alertRecyclerView.layoutManager = LinearLayoutManager(this)
-        alertRecyclerView.adapter = alertAdaptor
+            // Setup alert RecyclerView
+            runOnUiThread {
+                val alertAdaptor = AlertAdaptor(alertDataset, applicationContext)
+                val alertRecyclerView = findViewById<RecyclerView>(R.id.currentAlerts)
+                alertRecyclerView.layoutManager = LinearLayoutManager(this)
+                alertRecyclerView.adapter = alertAdaptor
+            }
+        }.start()
 
         // create notification channel
 
@@ -54,10 +53,9 @@ class Home : AppCompatActivity() {
         notificationManager.createNotificationChannel(channel)
 
 
-        // setup notification service
+        // start notification service
         // note: this requires running as a foreground service, due to Android O background
         //      exec limits (background service killed 10s after app enters idle)
-
         startForegroundService(Intent(this, BackgroundNotificationService::class.java))
 
 

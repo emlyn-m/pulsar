@@ -22,7 +22,7 @@ data class Alert(
 @Dao
 interface AlertDAO {
     @Query("SELECT * FROM Alert ORDER BY timestamp ASC")
-    fun getAll(): ArrayList<Alert>
+    fun getAll(): List<Alert>
 
     @Insert
     fun insertAll(vararg alerts : Alert)

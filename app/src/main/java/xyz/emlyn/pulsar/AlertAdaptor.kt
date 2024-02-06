@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class AlertAdaptor(private val dataSet: ArrayList<AlertStruct>, private val ctxt: Context)
+class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Context)
     : RecyclerView.Adapter<AlertAdaptor.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

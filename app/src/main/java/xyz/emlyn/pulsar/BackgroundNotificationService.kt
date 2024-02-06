@@ -2,47 +2,57 @@ package xyz.emlyn.pulsar
 
 import android.app.Service
 import android.content.Intent
-import android.os.Handler
-import android.os.HandlerThread
 import android.os.IBinder
-import android.os.Looper
-import android.os.Message
-import android.os.Process.THREAD_PRIORITY_DEFAULT
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import org.jivesoftware.smack.AbstractXMPPConnection
+import org.jivesoftware.smack.ConnectionConfiguration
+import org.jivesoftware.smack.chat.ChatManager
+import org.jivesoftware.smack.tcp.XMPPTCPConnection
+import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration
+import org.jxmpp.jid.impl.JidCreate
+import java.net.InetAddress
+
 
 class BackgroundNotificationService : Service() {
 
 
-    private var serviceLooper: Looper? = null
-    private var serviceHandler: ServiceHandler? = null
-
-    // Handler that receives messages from the thread
-    private inner class ServiceHandler(looper: Looper) : Handler(looper) {
-
-        override fun handleMessage(msg: Message) {
-            Log.d("pulsar.bgservice", "TS="+msg.arg1)
-            val newMsg = Message()
-            newMsg.arg1 = msg.arg1 + 1000
-            serviceHandler?.postDelayed({ this.handleMessage(newMsg) }, 1000)
+    private fun XMPPSetup() {
+        val config: XMPPTCPConnectionConfiguration = XMPPTCPConnectionConfiguration.builder()
+            .setUsernameAndPassword(BuildConfig.XMPP_USER, BuildConfig.XMPP_PASS)
+            .setHostAddress(InetAddress.getByName("emlyn.xyz"))
+            .setSecurityMode(ConnectionConfiguration.SecurityMode.required)
+            .setXmppDomain(JidCreate.domainBareFrom("emlyn.xyz"))
+            .setPort(5222)
+            .build()
+        val conn1: AbstractXMPPConnection = XMPPTCPConnection(config)
+        try {
+            conn1.connect()
+            if (!conn1.isConnected) { Log.e("pulsar.xmpp", "Conn fail") }
+            conn1.login()
+            if (conn1.isAuthenticated) {
+                Log.d("pulsar.xmpp", "Auth done")
+                val chatManager = ChatManager.getInstanceFor(conn1)
+                chatManager.addChatListener { chat, _ ->
+                    chat.addMessageListener { _, message ->
+                        Log.d(
+                            "pulsar.xmpp",
+                            "Received message: " + if (message != null) message.body else "NULL"
+                        )
+                    }
+                    Log.w("app", chat.toString())
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("pulsar.xmpp", e.toString())
         }
     }
 
     override fun onCreate() {
-
-        HandlerThread("ServiceStartArguments", THREAD_PRIORITY_DEFAULT).apply {
-            start()
-
-            // Get the HandlerThread's Looper and use it for our Handler
-            serviceLooper = looper
-            serviceHandler = ServiceHandler(looper)
-
-            Log.d("pulsar.bgservice", "TS="+0)
-
+        val thread = Thread {
+            XMPPSetup()
         }
-
-        serviceHandler!!.handleMessage(Message())
-
+        thread.start()
 
         super.onCreate()
     }
@@ -61,6 +71,6 @@ class BackgroundNotificationService : Service() {
         return START_STICKY
     }
     override fun onBind(intent: Intent?): IBinder? {
-        TODO("Not yet implemented")
+        return null
     }
 }

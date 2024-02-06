@@ -1,12 +1,22 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-
+    id("com.google.devtools.ksp")
 }
 
 android {
     namespace = "xyz.emlyn.pulsar"
     compileSdk = 34
+
+    buildFeatures.buildConfig = true
+
+    val props = Properties()
+    props.load(project.rootProject.file("local.properties").inputStream())
+    val XMPP_USER = props.getProperty("XMPP_USER")
+    val XMPP_PASS = props.getProperty("XMPP_PASS")
+
 
     defaultConfig {
         applicationId = "xyz.emlyn.pulsar"
@@ -16,12 +26,19 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
+        buildConfigField("String","XMPP_USER", XMPP_USER)
+        buildConfigField("String","XMPP_PASS", XMPP_PASS)
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -43,6 +60,16 @@ dependencies {
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+
+    implementation("org.igniterealtime.smack:smack-android-extensions:4.4.0") {
+        exclude(group="xpp3", module="xpp3")
+        exclude(group="xpp3", module="xpp3_min")
+    }
+    implementation("org.igniterealtime.smack:smack-tcp:4.4.0"){
+        exclude(group="xpp3", module="xpp3")
+        exclude(group="xpp3", module="xpp3_min")
+    }
 
 
     testImplementation("junit:junit:4.13.2")
