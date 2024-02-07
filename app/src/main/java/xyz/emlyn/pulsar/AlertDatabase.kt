@@ -49,11 +49,7 @@ abstract class AlertDB : RoomDatabase() {
             }
             return this.instance!!
         }
-
-        fun getInstance() : AlertDB? {
-            return this.instance
-        }
-
+        
         fun destroyInstance() {
             this.instance = null
         }

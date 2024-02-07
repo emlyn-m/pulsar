@@ -74,9 +74,7 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
 
             // remove item from database
             Thread {
-                val db = AlertDB.getInstance()
-                    ?: throw RuntimeException("No db exists and none could be created due to no context in AlertAdaptor")
-                // todo: find some way to prevent this exception being thrown
+                val db = AlertDB.getInstance(viewHolder.icon.context)
 
                 db.alertDao().deleteById(Integer.parseInt(viewHolder.id.text as String))
             }.start()
