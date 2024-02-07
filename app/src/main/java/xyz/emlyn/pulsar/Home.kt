@@ -26,9 +26,7 @@ class Home : AppCompatActivity() {
 
         // Pull existing data from Room API
         Thread {
-            val db = Room.databaseBuilder(applicationContext, AlertDB::class.java, "alerts").build()
-            db.close()
-            val alertDatasetRaw = db.alertDao().getAll()
+            val alertDatasetRaw = AlertDB.getInstance(this).alertDao().getAll()
             val alertDataset = ArrayList<Alert>()
             for (i in alertDatasetRaw.indices) {
                 alertDataset.add(alertDatasetRaw[i])

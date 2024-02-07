@@ -19,6 +19,8 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration
 import org.jxmpp.jid.impl.JidCreate
 import java.net.InetAddress
+import java.security.MessageDigest
+import java.util.UUID
 
 
 class BackgroundNotificationService : Service() {
@@ -56,6 +58,8 @@ class BackgroundNotificationService : Service() {
                             }
                         }
                         // create notification
+                        // i know i know this approach sucks but fuck it we ball todo make this better
+                        val msgId : Int = UUID.randomUUID().hashCode()
                         if (!appInForeground) {
                             val builder = NotificationCompat.Builder(this, "pulsar_hud")
                                 .setSmallIcon(R.drawable.mask_circle)
@@ -69,15 +73,18 @@ class BackgroundNotificationService : Service() {
                                         Manifest.permission.POST_NOTIFICATIONS
                                     ) == PackageManager.PERMISSION_GRANTED
                                 ) {
-                                    notify(NotificationIDManager.getNewID(), builder.build())
+                                    notify(msgId, builder.build())
                                 }
                             }
                         }
 
+                        // add message to database
+                        AlertDB.getInstance(applicationContext).alertDao().insertAll(Alert(msgId, R.drawable.mask_circle, 1, message.body!!, System.currentTimeMillis() / 1000))
 
 
 
-                        // todo: add message to room api, likely also do some kind of IPC (maybe via prefs datastore) to alert that the list in home.kt needs to be refreshed
+
+                        // todo: likely also do some kind of IPC (maybe via prefs datastore) to alert that the list in home.kt needs to be refreshed
                     }
                     Log.w("app", chat.toString())
                 }
@@ -107,7 +114,7 @@ class BackgroundNotificationService : Service() {
             .build()
 
 
-        startForeground(NotificationIDManager.getNewID(), backgroundServiceNotification)
+        startForeground(1, backgroundServiceNotification)
         return START_STICKY
     }
     override fun onBind(intent: Intent?): IBinder? {
