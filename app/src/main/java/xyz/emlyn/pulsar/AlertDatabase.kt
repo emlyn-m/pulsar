@@ -31,6 +31,9 @@ interface AlertDAO {
 
     @Delete
     fun delete(alert : Alert)
+
+    @Query("DELETE FROM Alert WHERE uid = :uid")
+    fun deleteById(uid : Int)
 }
 
 @Database(entities = [Alert::class], version = 1)
@@ -45,6 +48,10 @@ abstract class AlertDB : RoomDatabase() {
                 this.instance = Room.databaseBuilder(ctxt, AlertDB::class.java, "alerts").build()
             }
             return this.instance!!
+        }
+
+        fun getInstance() : AlertDB? {
+            return this.instance
         }
 
         fun destroyInstance() {

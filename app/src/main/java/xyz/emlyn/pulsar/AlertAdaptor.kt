@@ -17,6 +17,7 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
     : RecyclerView.Adapter<AlertAdaptor.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val id : TextView
         val msg: TextView
         val icon: ImageView
         val sev: TextView
@@ -24,6 +25,7 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
         val discard: TextView
 
         init {
+            id = view.findViewById(R.id.alertUUID)
             msg = view.findViewById(R.id.alertMsg)
             icon = view.findViewById(R.id.clusterIcon)
             sev = view.findViewById(R.id.alertSev)
@@ -34,6 +36,7 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
 
 
     fun discardAlert(position: Int) {
+
         dataSet.removeAt(position)
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, dataSet.size);
@@ -52,6 +55,7 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
+        viewHolder.id.text = dataSet[position].uid.toString()
         viewHolder.msg.text = dataSet[position].msg
         viewHolder.sev.text = ctxt.resources.getStringArray(R.array.sevString)[dataSet[position].sev]
 
@@ -67,6 +71,16 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
 
         viewHolder.discard.setOnClickListener {run {
             discardAlert(viewHolder.adapterPosition)
+
+            // remove item from database
+            Thread {
+                val db = AlertDB.getInstance()
+                    ?: throw RuntimeException("No db exists and none could be created due to no context in AlertAdaptor")
+                // todo: find some way to prevent this exception being thrown
+
+                db.alertDao().deleteById(Integer.parseInt(viewHolder.id.text as String))
+            }.start()
+
         }}
     }
 
