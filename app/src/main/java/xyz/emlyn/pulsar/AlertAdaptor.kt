@@ -1,5 +1,6 @@
 package xyz.emlyn.pulsar
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.icu.text.DateFormat
@@ -10,6 +11,7 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -70,6 +72,8 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
         val sevColor = ColorStateList.valueOf(ctxt.resources.getIntArray(R.array.sev_color)[dataSet[position].sev])
         viewHolder.timestamp.setTextColor(sevColor)
         viewHolder.sev.setTextColor(sevColor)
+
+        viewHolder.icon.background = AppCompatResources.getDrawable(viewHolder.icon.context, dataSet[position].icon)
 
 
         viewHolder.timestamp.text =
