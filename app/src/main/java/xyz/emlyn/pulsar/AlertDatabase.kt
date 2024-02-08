@@ -24,10 +24,10 @@ data class Alert(
 
 @Dao
 interface AlertDAO {
-    @Query("SELECT * FROM Alert ORDER BY timestamp ASC")
+    @Query("SELECT * FROM Alert ORDER BY timestamp DESC")
     fun getAll(): List<Alert>
 
-    @Query("SELECT * FROM Alert ORDER BY timestamp ASC")
+    @Query("SELECT * FROM Alert ORDER BY timestamp DESC")
     fun getAllObservable() : LiveData<List<Alert>>
 
     @Insert
