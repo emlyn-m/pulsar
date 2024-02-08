@@ -76,9 +76,10 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
         viewHolder.icon.background = AppCompatResources.getDrawable(viewHolder.icon.context, dataSet[position].icon)
 
 
+        // multiply timestamp by 1000 as Date constructor expects time to ms, but we send it to second precision
         viewHolder.timestamp.text =
-            DateFormat.getPatternInstance(DateFormat.NUM_MONTH_DAY).format(Date(dataSet[position].timestamp)) + " @ " +
-            DateFormat.getPatternInstance(DateFormat.HOUR24_MINUTE).format(Date(dataSet[position].timestamp))
+            DateFormat.getPatternInstance(DateFormat.NUM_MONTH_DAY).format(Date(dataSet[position].timestamp * 1000)) + " @ " +
+            DateFormat.getPatternInstance(DateFormat.HOUR24_MINUTE).format(Date(dataSet[position].timestamp * 1000))
 
 
         viewHolder.discard.setOnClickListener {run {
