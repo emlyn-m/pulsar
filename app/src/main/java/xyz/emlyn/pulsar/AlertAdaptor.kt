@@ -3,6 +3,7 @@ package xyz.emlyn.pulsar
 import android.content.Context
 import android.content.res.ColorStateList
 import android.icu.text.DateFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnLongClickListener
@@ -40,6 +41,13 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
         dataSet.removeAt(position)
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, dataSet.size);
+    }
+
+    fun setNewAlerts(newAlertList : ArrayList<Alert>) {
+        Log.d("pulsar.xmpp", "setNewAlerts called")
+        dataSet.removeAll { true; }
+        dataSet.addAll(newAlertList)
+        notifyItemRangeChanged(0, newAlertList.size)
     }
 
     // Create new views (invoked by the layout manager)

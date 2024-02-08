@@ -1,6 +1,7 @@
 package xyz.emlyn.pulsar
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
@@ -26,6 +27,9 @@ interface AlertDAO {
     @Query("SELECT * FROM Alert ORDER BY timestamp ASC")
     fun getAll(): List<Alert>
 
+    @Query("SELECT * FROM Alert ORDER BY timestamp ASC")
+    fun getAllObservable() : LiveData<List<Alert>>
+
     @Insert
     fun insertAll(vararg alerts : Alert)
 
@@ -49,7 +53,11 @@ abstract class AlertDB : RoomDatabase() {
             }
             return this.instance!!
         }
-        
+
+        fun getInstance() : AlertDB? {
+            return this.instance
+        }
+
         fun destroyInstance() {
             this.instance = null
         }

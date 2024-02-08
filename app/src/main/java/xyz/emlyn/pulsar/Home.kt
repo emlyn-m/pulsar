@@ -6,17 +6,21 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
 import org.jivesoftware.smack.android.AndroidSmackInitializer
 
 
 class Home : AppCompatActivity() {
+
+    private var alertAdaptor : AlertAdaptor? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -24,7 +28,8 @@ class Home : AppCompatActivity() {
         // initialize smack
         AndroidSmackInitializer.initialize(applicationContext);
 
-        // Pull existing data from Room API
+
+        // Initialize data from Room API
         Thread {
             val alertDatasetRaw = AlertDB.getInstance(this).alertDao().getAll()
             val alertDataset = ArrayList<Alert>()
@@ -32,9 +37,20 @@ class Home : AppCompatActivity() {
                 alertDataset.add(alertDatasetRaw[i])
             }
 
+            // setup viewmodel here - must ENSURE occurs after first initilization of AlertDB as HomeViewModel does not have context
+            // Room API observer
+            runOnUiThread {
+                val viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+                viewModel.alertLiveData.observe(this) {
+                    Log.d("pulsar.xmpp", "New data observed!!")
+                    alertAdaptor?.setNewAlerts(it as ArrayList<Alert>);
+
+                }
+            }
+
             // Setup alert RecyclerView
             runOnUiThread {
-                val alertAdaptor = AlertAdaptor(alertDataset, applicationContext)
+                alertAdaptor = AlertAdaptor(alertDataset, applicationContext)
                 val alertRecyclerView = findViewById<RecyclerView>(R.id.currentAlerts)
                 alertRecyclerView.layoutManager = LinearLayoutManager(this)
                 alertRecyclerView.adapter = alertAdaptor
