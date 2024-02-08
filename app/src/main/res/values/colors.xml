@@ -22,8 +22,8 @@
     <array name="sev_color">
         <item>#ff00</item>
         <item>#ff00</item>
-        <item>#fff0</item>
         <item>#0000</item>
+        <item>#fff0</item>
         <item>#ff7df9ff</item>
         <item>#0000</item>
         <item>@color/accent</item>
