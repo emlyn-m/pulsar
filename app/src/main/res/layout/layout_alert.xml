@@ -13,6 +13,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:visibility="invisible"
+        android:textSize="0sp"
         />
     <TextView
         android:id="@+id/discardAlert"
