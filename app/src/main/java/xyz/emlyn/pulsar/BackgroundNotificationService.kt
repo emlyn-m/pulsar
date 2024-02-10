@@ -14,24 +14,79 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import org.jivesoftware.smack.AbstractXMPPConnection
 import org.jivesoftware.smack.ConnectionConfiguration
+import org.jivesoftware.smack.ConnectionListener
 import org.jivesoftware.smack.chat.ChatManager
-import org.jivesoftware.smack.packet.Message
 import org.jivesoftware.smack.tcp.XMPPTCPConnection
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration
 import org.json.JSONObject
 import org.jxmpp.jid.impl.JidCreate
+import java.net.HttpURLConnection
 import java.net.InetAddress
+import java.net.URL
 import java.util.UUID
 
 
-class BackgroundNotificationService : Service() {
+class BackgroundNotificationService : Service(), ConnectionListener {
 
     val MSG_ICONS = hashMapOf(
-        Pair("server", R.drawable.mask_circle), // general server issues (eg. ddns notification, intrustion)
+        Pair("server", R.drawable.mask_circle), // general server events
         Pair("nzpvt", R.drawable.mask_rounded_rect), // nzpvt subdomain
         Pair("exyz", R.drawable.mask_circle), // main website
         Pair("pulsar", R.drawable.mask_circle), // pulsar alert service
     )
+
+
+    // connection closed normally
+    override fun connectionClosed() {
+        connectionClosedOnError(null)
+        super.connectionClosed()
+    }
+
+    // connection closed with error - retry
+    override fun connectionClosedOnError(e: java.lang.Exception?) {
+
+        // check known good sites
+        try {
+            val gurl = URL("https://google.com")
+            val gconnection = gurl.openConnection() as HttpURLConnection
+            val gcode = gconnection.responseCode
+
+            if (gcode == 200) {
+                // reachable
+            } else { throw RuntimeException("") }
+
+            val wurl = URL("https://wikipedia.com")
+            val wconnection = wurl.openConnection() as HttpURLConnection
+            val wcode = wconnection.responseCode
+
+            if (wcode == 200) {
+                // reachable
+            } else { throw RuntimeException("") }
+
+            val curl = URL("https://cloudflare.com")
+            val cconnection = curl.openConnection() as HttpURLConnection
+            val ccode = cconnection.responseCode
+
+            if (ccode == 200) {
+                // reachable
+            } else { throw RuntimeException("") }
+
+            // all servers reachable - throw alert
+            onAlertReceived("{\"class\":\"pulsar\", \"sev\":0, \"body\":\"XMPP connection closed!\", \"timestamp\":" + System.currentTimeMillis() / 1000 + "}")
+        } catch (e : Exception) {
+            // test servers not reachable - nothing wrong with server
+            //      if this is reached, either the device has lost internet connectivity
+            //      or the apocalypse is happening
+            Log.d("pulsar.xmpp", "XMPP DC but no servers reachable - client error: " + e.toString())
+        }
+
+
+        // todo: attempt reconnection with delay of 5m, 15m, 30m, 60m
+
+
+        super.connectionClosedOnError(e)
+    }
+
 
     private fun onAlertReceived(message : String) {
         Log.d(
@@ -104,7 +159,11 @@ class BackgroundNotificationService : Service() {
                 .setXmppDomain(JidCreate.domainBareFrom("emlyn.xyz"))
                 .setPort(5222)
                 .build()
+
+
             val conn1: AbstractXMPPConnection = XMPPTCPConnection(config)
+            conn1.addConnectionListener(this)
+
 
             conn1.connect()
             if (!conn1.isConnected) { onAlertReceived("{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP connection failed!!\"}" ) }
@@ -120,7 +179,16 @@ class BackgroundNotificationService : Service() {
             }
         } catch (e: Exception) {
             Log.e("pulsar.xmpp", e.toString())
-            onAlertReceived("{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP Error: " + e.toString().replace("\"", "'") + "\"}" )
+
+            // network issue - use checks for known sites
+            if (e is java.net.UnknownHostException) {
+                connectionClosedOnError(null)
+            } else {
+                onAlertReceived(
+                    "{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP Error: " + e.toString()
+                        .replace("\"", "'") + "\"}"
+                )
+            }
         }
     }
 
