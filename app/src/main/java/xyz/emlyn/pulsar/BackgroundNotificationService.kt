@@ -129,7 +129,7 @@ class BackgroundNotificationService : Service(), ConnectionListener {
         if (!appInForeground && msgSev <= 3) {
             val builder = NotificationCompat.Builder(this, "pulsar_hud")
                 .setSmallIcon(R.drawable.mask_circle)
-                .setContentTitle(message)
+                .setContentTitle(msgBody)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
 

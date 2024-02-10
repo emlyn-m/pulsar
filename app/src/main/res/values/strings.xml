@@ -9,12 +9,12 @@
     <string name="notif_channel_desc">XMPP Service</string>
 
     <string-array name="sevString">
-        <item>emerg</item> <!-- IE: Server unreachable -->
-        <item>alert</item> <!-- IE: Database failure -->
+        <item>emerg</item> <!-- 0 IE: Server unreachable -->
+        <item>alert</item> <!-- 1 IE: Database failure -->
         <item> </item>
-        <item>error</item> <!-- IE: Parse Journal fail -->
-        <item>warn</item> <!-- IE: Attempted intrusions, degraded speeds, IP change -->
+        <item>error</item> <!-- 2 IE: Parse Journal fail -->
+        <item>warn</item> <!-- 3 IE: Attempted intrusions, degraded speeds, IP change -->
         <item> </item>
-        <item>info</item> <!-- IE: Journal parsed succesfully -->
+        <item>info</item> <!-- 5 IE: Journal parsed succesfully -->
     </string-array>
 </resources>
