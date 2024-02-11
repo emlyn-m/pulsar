@@ -126,7 +126,7 @@ class BackgroundNotificationService : Service(), ConnectionListener {
         // create notification
         // i know i know this approach to msgId sucks but fuck it we ball todo make this better
         val msgId : Int = UUID.randomUUID().hashCode()
-        if (!appInForeground && msgSev <= 3) {
+        if (!appInForeground && msgSev < 5) {
             val builder = NotificationCompat.Builder(this, "pulsar_hud")
                 .setSmallIcon(R.drawable.mask_circle)
                 .setContentTitle(msgBody)

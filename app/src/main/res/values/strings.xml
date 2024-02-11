@@ -12,9 +12,9 @@
         <item>emerg</item> <!-- 0 IE: Server unreachable -->
         <item>alert</item> <!-- 1 IE: Database failure -->
         <item> </item>
-        <item>error</item> <!-- 2 IE: Parse Journal fail -->
-        <item>warn</item> <!-- 3 IE: Attempted intrusions, degraded speeds, IP change -->
+        <item>error</item> <!-- 3 IE: Parse Journal fail -->
+        <item>warn</item> <!-- 4 IE: Attempted intrusions, degraded speeds, IP change -->
         <item> </item>
-        <item>info</item> <!-- 5 IE: Journal parsed succesfully -->
+        <item>info</item> <!-- 6 IE: Journal parsed succesfully -->
     </string-array>
 </resources>
