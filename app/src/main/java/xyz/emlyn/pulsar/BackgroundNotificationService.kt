@@ -10,7 +10,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Binder
+import android.os.Handler
+import android.os.HandlerThread
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -93,8 +96,29 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             Log.d("pulsar.xmpp", "XMPP DC but no servers reachable - client error")
         }
 
+        val reconnectThread = HandlerThread("xmppreconnectthread")
+        reconnectThread.start()
 
-        // todo: attempt reconnection with delay of 5m, 15m, 30m, 60m
+        if (!xmppSetup()) {
+            Log.w("pulsar.xmpp", "Intial reconnect failed!")
+            Handler(reconnectThread.looper).postDelayed({
+                if (!xmppSetup()) {
+                    Log.w("pulsar.xmpp", "5m reconnect failed!")
+                    Handler(reconnectThread.looper).postDelayed({
+                        if (xmppSetup()) {
+                            Log.w("pulsar.xmpp", "15m reconnect failed!")
+                            Handler(reconnectThread.looper).postDelayed({
+                                xmppSetup()
+                            }, 15 * 60 * 1000) // 30m total delay
+                        } else {
+                            Log.w("pulsar.xmpp", "10m reconnect succeed")
+                        }
+                    }, 10 * 60 * 1000) // 10m total delay
+                } else {
+                    Log.w("pulsar.xmpp", "5m reconnect succeed")
+                }
+            }, 5 * 60 * 1000) //5m total delay
+        }
 
 
         super.connectionClosedOnError(e)
@@ -162,7 +186,7 @@ class BackgroundNotificationService : Service(), ConnectionListener {
 
     }
 
-    fun xmppSetup() {
+    fun xmppSetup() : Boolean {
 
         try {
             val config: XMPPTCPConnectionConfiguration = XMPPTCPConnectionConfiguration.builder()
@@ -181,20 +205,21 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             conn1.connect()
             if (!conn1.isConnected) {
                 sendMessageToActivity("connFailed")
-                return
+                return false
             }
             conn1.login()
-            if (conn1.isAuthenticated) {
+            return if (conn1.isAuthenticated) {
                 Log.d("pulsar.xmpp", "Auth done")
                 sendMessageToActivity("connected")
                 val chatManager = ChatManager.getInstanceFor(conn1)
                 chatManager.addChatListener { chat, _ ->
                     chat.addMessageListener { _, message -> onAlertReceived(message.body!!)}
                 }
+                true
             } else {
                 onAlertReceived("{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP authentication failed!!\"}" )
                 sendMessageToActivity("connFailed")
-                return
+                false
             }
         } catch (e: Exception) {
             Log.e("pulsar.xmpp", "200 "+e.toString())
@@ -206,6 +231,7 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             sendMessageToActivity("connFailed")
 
         }
+        return false
     }
 
     override fun onCreate() {
