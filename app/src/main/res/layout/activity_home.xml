@@ -72,7 +72,7 @@
             android:layout_marginStart="4dp"
             android:textSize="12sp"
             android:textColor="@color/status_online"
-            android:text="@string/server_uptime" />
+            android:text="@string/server_online" />
 
         <ImageView
             android:id="@+id/serverStatusIcon"

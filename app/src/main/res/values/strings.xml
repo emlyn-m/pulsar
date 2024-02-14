@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Pulsar</string>
     <string name="server_name">emlyn.xyz</string>
-    <string name="server_uptime">Uptime: </string>
-    <string name="server_downtime">Downtime: </string>
+    <string name="server_online">Online</string>
+    <string name="server_offline">Offline</string>
     <string name="discard">Discard</string>
 
     <string name="notif_channel_name">Pulsar</string>

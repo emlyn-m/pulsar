@@ -16,8 +16,8 @@
     <color name="accent">@color/purple_200</color>
 
     <!-- TODO: Fix these colors -->
-    <color name="status_online">#f0f0</color>
-    <color name="status_offline">#ff00</color>
+    <color name="status_online">#ff00ff00</color>
+    <color name="status_offline">#ffff0000</color>
 
     <array name="sev_color">
         <item>#ff00</item>

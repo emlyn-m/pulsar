@@ -7,11 +7,13 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.jivesoftware.smack.AbstractXMPPConnection
 import org.jivesoftware.smack.ConnectionConfiguration
 import org.jivesoftware.smack.ConnectionListener
@@ -35,6 +37,19 @@ class BackgroundNotificationService : Service(), ConnectionListener {
         Pair("pulsar", R.drawable.mask_circle), // pulsar alert service
     )
 
+    private lateinit var conn1 : AbstractXMPPConnection
+
+    private val binder = BackgroundNotificationBinder()
+
+    inner class BackgroundNotificationBinder : Binder() {
+        fun getService() : BackgroundNotificationService = this@BackgroundNotificationService
+    }
+
+    private fun sendMessageToActivity(msg : String) {
+        val msgIntent = Intent("xmpp-service-msg")
+        msgIntent.putExtra("msgBody", msg)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(msgIntent)
+    }
 
     // connection closed normally
     override fun connectionClosed() {
@@ -44,6 +59,8 @@ class BackgroundNotificationService : Service(), ConnectionListener {
 
     // connection closed with error - retry
     override fun connectionClosedOnError(e: java.lang.Exception?) {
+
+        sendMessageToActivity("disconnected")
 
         // check known good sites
         try {
@@ -77,7 +94,7 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             // test servers not reachable - nothing wrong with server
             //      if this is reached, either the device has lost internet connectivity
             //      or the apocalypse is happening
-            Log.d("pulsar.xmpp", "XMPP DC but no servers reachable - client error: " + e.toString())
+            Log.d("pulsar.xmpp", "XMPP DC but no servers reachable - client error")
         }
 
 
@@ -149,7 +166,7 @@ class BackgroundNotificationService : Service(), ConnectionListener {
 
     }
 
-    private fun xmppSetup() {
+    fun xmppSetup() {
 
         try {
             val config: XMPPTCPConnectionConfiguration = XMPPTCPConnectionConfiguration.builder()
@@ -161,21 +178,26 @@ class BackgroundNotificationService : Service(), ConnectionListener {
                 .build()
 
 
-            val conn1: AbstractXMPPConnection = XMPPTCPConnection(config)
+            conn1 = XMPPTCPConnection(config)
             conn1.addConnectionListener(this)
 
 
             conn1.connect()
-            if (!conn1.isConnected) { onAlertReceived("{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP connection failed!!\"}" ) }
+            if (!conn1.isConnected) {
+                onAlertReceived("{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP connection failed!!\"}" )
+                sendMessageToActivity("connFailed")
+            }
             conn1.login()
             if (conn1.isAuthenticated) {
                 Log.d("pulsar.xmpp", "Auth done")
+                sendMessageToActivity("connected")
                 val chatManager = ChatManager.getInstanceFor(conn1)
                 chatManager.addChatListener { chat, _ ->
                     chat.addMessageListener { _, message -> onAlertReceived(message.body!!)}
                 }
             } else {
                 onAlertReceived("{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP authentication failed!!\"}" )
+                sendMessageToActivity("connFailed")
             }
         } catch (e: Exception) {
             Log.e("pulsar.xmpp", e.toString())
@@ -183,11 +205,12 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             // network issue - use checks for known sites
             if (e is java.net.UnknownHostException) {
                 connectionClosedOnError(null)
+                sendMessageToActivity("connFailed")
             } else {
                 onAlertReceived(
                     "{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP Error: " + e.toString()
-                        .replace("\"", "'") + "\"}"
-                )
+                        .replace("\"", "'") + "\"}")
+                sendMessageToActivity("connFailed")
             }
         }
     }
@@ -215,7 +238,7 @@ class BackgroundNotificationService : Service(), ConnectionListener {
         startForeground(1, backgroundServiceNotification)
         return START_STICKY
     }
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
+    override fun onBind(intent: Intent?): IBinder {
+        return binder
     }
 }
