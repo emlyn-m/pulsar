@@ -9,11 +9,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.os.Binder
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
-import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -35,7 +33,7 @@ import java.util.UUID
 
 class BackgroundNotificationService : Service(), ConnectionListener {
 
-    val MSG_ICONS = hashMapOf(
+    private val msgIcons = hashMapOf(
         Pair("server", R.drawable.mask_circle), // general server events
         Pair("nzpvt", R.drawable.mask_rounded_rect), // nzpvt subdomain
         Pair("exyz", R.drawable.mask_circle), // main website
@@ -157,11 +155,11 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             msgSev = msgJObj.getInt("sev")
             msgBody = msgJObj.getString("body")
             msgTimestamp = msgJObj.getLong("timestamp")
-            msgIconId = MSG_ICONS[msgJObj.getString("class")]!!
+            msgIconId = msgIcons[msgJObj.getString("class")]!!
         } catch (e : org.json.JSONException) {
             msgBody = "RECEIVED MALFORMED INPUT: " + message
             msgSev = 0
-            msgIconId = MSG_ICONS["pulsar"]!!
+            msgIconId = msgIcons["pulsar"]!!
             msgTimestamp = System.currentTimeMillis() / 1000
             Log.e("pulsar.xmpp", e.toString())
         }
@@ -189,7 +187,7 @@ class BackgroundNotificationService : Service(), ConnectionListener {
         }
 
         // add message to database
-        AlertDB.getInstance(applicationContext).alertDao().insertAll(Alert(msgId, msgIconId, msgSev, msgBody, msgTimestamp))
+        AlertDB.getInstance(applicationContext).alertDao().insertAll(Alert(msgId, msgIconId, msgSev, msgBody, msgTimestamp, 1))
 
     }
 
@@ -227,7 +225,7 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             } else {
                 onAlertReceived("{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP authentication failed!!\"}" )
                 sendMessageToActivity("connFailed")
-                false
+                return false
             }
         } catch (e: Exception) {
             Log.e("pulsar.xmpp", "200 "+e.toString())

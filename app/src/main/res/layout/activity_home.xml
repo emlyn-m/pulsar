@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
+    android:id="@+id/homeRootLayout"
     tools:context=".Home">
+
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -23,6 +25,14 @@
             android:textStyle="bold"
             android:textColor="@color/accent"
             android:text=".pulsar" />
+
+        <ImageView
+            android:id="@+id/actionBarFilter"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="24dp"
+            android:background="@color/accent" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -124,6 +134,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="24dp" />
 
+    <include
+        android:id="@+id/filterLayout"
+        layout="@layout/layout_filter"
+
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 

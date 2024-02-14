@@ -9,13 +9,21 @@
     <string name="notif_channel_name">Pulsar</string>
     <string name="notif_channel_desc">XMPP Service</string>
 
+    <string name="sev_emerg">emerg</string>
+    <string name="sev_alert">alert</string>
+    <string name="sev_error">error</string>
+    <string name="sev_warn">warn</string>
+    <string name="sev_info">info</string>
+    <string name="log_level">Log level</string>
+    <string name="show_discarded_entries">Show discarded entries</string>
+
     <string-array name="sevString">
-        <item>emerg</item> <!-- 0 IE: Server unreachable -->
-        <item>alert</item> <!-- 1 IE: Database failure -->
+        <item>@string/sev_emerg</item> <!-- 0 IE: Server unreachable -->
+        <item>@string/sev_alert</item> <!-- 1 IE: Database failure -->
         <item> </item>
-        <item>error</item> <!-- 3 IE: Parse Journal fail -->
-        <item>warn</item> <!-- 4 IE: Attempted intrusions, degraded speeds, IP change -->
+        <item>@string/sev_error</item> <!-- 3 IE: Parse Journal fail -->
+        <item>@string/sev_warn</item> <!-- 4 IE: Attempted intrusions, degraded speeds, IP change -->
         <item> </item>
-        <item>info</item> <!-- 6 IE: Journal parsed succesfully -->
+        <item>@string/sev_info</item> <!-- 6 IE: Journal parsed succesfully -->
     </string-array>
 </resources>

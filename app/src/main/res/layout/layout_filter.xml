@@ -1,6 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <ImageView
+        android:id="@+id/filterOverlay"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="#8000" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="50dp"
+        android:padding="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/logLevelTitle"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="@color/accent"
+            android:text="@string/log_level" />
+
+        <RadioGroup
+            android:id="@+id/logLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/logLevelTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_margin="20dp"
+            >
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sev_emerg"
+                android:textColor="@color/sev_emerg"
+                android:buttonTint="@color/sev_emerg"
+                android:textSize="10sp" />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sev_alert"
+                android:textColor="@color/sev_alert"
+                android:buttonTint="@color/sev_alert"
+                android:textSize="10sp" />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sev_error"
+                android:textColor="@color/sev_error"
+                android:buttonTint="@color/sev_error"
+                android:textSize="10sp" />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sev_warn"
+                android:textColor="@color/sev_warn"
+                android:buttonTint="@color/sev_warn"
+                android:textSize="10sp" />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sev_info"
+                android:textColor="@color/sev_info"
+                android:buttonTint="@color/sev_info"
+                android:textSize="10sp" />
+
+        </RadioGroup>
+
+        <CheckBox
+            android:id="@+id/discardedEntries"
+            android:theme="@style/checkBoxStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/logLevel"
+            android:text="@string/show_discarded_entries"
+            android:textColor="@color/white"
+            android:buttonTint="@color/white"
+            android:textSize="12sp"
+            android:layout_marginTop="10dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

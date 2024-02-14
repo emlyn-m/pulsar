@@ -1,19 +1,16 @@
 package xyz.emlyn.pulsar
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.icu.text.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
-import java.text.SimpleDateFormat
 import java.util.Date
 
 class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Context)
@@ -38,11 +35,11 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
     }
 
 
-    fun discardAlert(position: Int) {
+    private fun discardAlert(position: Int) {
 
         dataSet.removeAt(position)
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, dataSet.size);
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position, dataSet.size)
     }
 
     fun setNewAlerts(newAlertList : ArrayList<Alert>) {
@@ -89,7 +86,7 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
             Thread {
                 val db = AlertDB.getInstance(viewHolder.icon.context)
 
-                db.alertDao().deleteById(Integer.parseInt(viewHolder.id.text as String))
+                db.alertDao().discardAlert(Integer.parseInt(viewHolder.id.text as String))
             }.start()
 
         }}

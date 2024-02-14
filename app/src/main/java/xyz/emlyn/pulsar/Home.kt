@@ -1,6 +1,8 @@
 package xyz.emlyn.pulsar
 
 import android.Manifest
+import android.animation.LayoutTransition
+import android.animation.ValueAnimator
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
@@ -11,20 +13,25 @@ import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.core.graphics.red
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.jivesoftware.smack.android.AndroidSmackInitializer
+import kotlin.math.roundToInt
 
 
 class Home : AppCompatActivity(), View.OnClickListener {
@@ -33,6 +40,8 @@ class Home : AppCompatActivity(), View.OnClickListener {
 
     private var xmppConnected = false
     private var currentlyConnecting = false
+
+    private val layoutTransitionDuration = 500L // milliseconds
 
 
     private val msgReceiver : BroadcastReceiver = object : BroadcastReceiver() {
@@ -59,7 +68,21 @@ class Home : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.navigationBarColor = getColor(R.color.black)
+
         setContentView(R.layout.activity_home)
+
+
+        findViewById<ConstraintLayout>(R.id.homeRootLayout).layoutTransition = LayoutTransition()
+
+        findViewById<ConstraintLayout>(R.id.homeRootLayout).layoutTransition.enableTransitionType(
+            LayoutTransition.APPEARING)
+        findViewById<ConstraintLayout>(R.id.homeRootLayout).layoutTransition.enableTransitionType(
+            LayoutTransition.DISAPPEARING)
+
+        findViewById<ConstraintLayout>(R.id.homeRootLayout).layoutTransition.setDuration(layoutTransitionDuration)
+
+
 
         // initialize smack
         AndroidSmackInitializer.initialize(applicationContext);
@@ -92,6 +115,8 @@ class Home : AppCompatActivity(), View.OnClickListener {
                 alertRecyclerView.adapter = alertAdaptor
 
                 findViewById<View>(R.id.serverStatusWrapper).setOnClickListener(this)
+                findViewById<View>(R.id.filterOverlay).setOnClickListener(this)
+                findViewById<View>(R.id.actionBarFilter).setOnClickListener(this)
             }
         }.start()
 
@@ -137,19 +162,55 @@ class Home : AppCompatActivity(), View.OnClickListener {
     }
 
 
-
     override fun onClick(v: View?) {
-        //check if xmpp connection down, if so, try trigger connection
-        if (xmppConnected) { return; }
-        if (currentlyConnecting) { return; }
 
-        currentlyConnecting = true
-        findViewById<TextView>(R.id.serverStatus).text = getString(R.string.status_connecting)
-        findViewById<TextView>(R.id.serverStatus).setTextColor(getColor(R.color.status_connecting))
-        findViewById<ImageView>(R.id.serverStatusIcon).backgroundTintList = ColorStateList.valueOf(getColor(R.color.status_connecting))
+        if (v?.id == R.id.serverStatusWrapper) {
+
+            //check if xmpp connection down, if so, try trigger connection
+            if (xmppConnected) { return; }
+            if (currentlyConnecting) { return; }
+
+            currentlyConnecting = true
+            findViewById<TextView>(R.id.serverStatus).text = getString(R.string.status_connecting)
+            findViewById<TextView>(R.id.serverStatus).setTextColor(getColor(R.color.status_connecting))
+            findViewById<ImageView>(R.id.serverStatusIcon).backgroundTintList =
+                ColorStateList.valueOf(getColor(R.color.status_connecting))
 
 
-        sendMessageToService("forceconnect")
+            sendMessageToService("forceconnect")
+
+        } else if (v?.id == R.id.actionBarFilter) {
+
+            val backgroundColor = getColor(R.color.background).red
+            val mColorAnimator = ValueAnimator.ofFloat(0f, 0.53333336f)
+            mColorAnimator.duration = layoutTransitionDuration
+            mColorAnimator.addUpdateListener {
+                val cVal : Int = ((1 - it.animatedValue as Float) * backgroundColor).roundToInt()
+                window.navigationBarColor = Color.rgb(cVal, cVal, cVal)
+                window.statusBarColor = Color.rgb(cVal, cVal, cVal)
+            }
+            mColorAnimator.interpolator = findViewById<ConstraintLayout>(R.id.homeRootLayout).layoutTransition.getInterpolator(LayoutTransition.APPEARING)
+
+            findViewById<ConstraintLayout>(R.id.filterLayout).visibility = View.VISIBLE
+
+            mColorAnimator.start()
+
+        } else if (v?.id == R.id.filterOverlay) {
+
+            val backgroundColor = getColor(R.color.background).red
+            val mColorAnimator = ValueAnimator.ofFloat(0.53333336f, 0f)
+            mColorAnimator.duration = layoutTransitionDuration
+            mColorAnimator.addUpdateListener {
+                val cVal : Int = ((1 - it.animatedValue as Float) * backgroundColor).roundToInt()
+                window.navigationBarColor = Color.rgb(cVal, cVal, cVal)
+                window.statusBarColor = Color.rgb(cVal, cVal, cVal)
+            }
+            mColorAnimator.interpolator = findViewById<ConstraintLayout>(R.id.homeRootLayout).layoutTransition.getInterpolator(LayoutTransition.DISAPPEARING)
+
+            findViewById<ConstraintLayout>(R.id.filterLayout).visibility = View.GONE
+
+            mColorAnimator.start()
+        }
     }
 
     override fun onPause() {

@@ -5,11 +5,12 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
+    <color name="black">#f333</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="background">#f000</color>
-    <color name="card_background">#ff353535</color>
+    <color name="background">@color/black</color>
+    <color name="background_overlay">#ff181818</color>
+    <color name="card_background">@color/black</color>
     <color name="text">#ffff</color>
 
     <color name="shadow">#ffff</color>
@@ -20,14 +21,20 @@
     <color name="status_offline">#ffff0000</color>
     <color name="status_connecting">#ffffff00</color>
 
+    <color name="sev_emerg">#ff00</color>
+    <color name="sev_alert">#ff00</color>
+    <color name="sev_error">#fff0</color>
+    <color name="sev_warn">#ff7df9ff</color>
+    <color name="sev_info">@color/accent</color>
+
     <array name="sev_color">
-        <item>#ff00</item>
-        <item>#ff00</item>
+        <item>@color/sev_emerg</item>
+        <item>@color/sev_alert</item>
         <item>#0000</item>
-        <item>#fff0</item>
-        <item>#ff7df9ff</item>
+        <item>@color/sev_error</item>
+        <item>@color/sev_warn</item>
         <item>#0000</item>
-        <item>@color/accent</item>
+        <item>@color/sev_info</item>
     </array>
 
 </resources>
