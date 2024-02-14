@@ -6,19 +6,15 @@ import android.animation.ValueAnimator
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.os.IBinder
 import android.util.Log
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.RadioGroup
@@ -27,28 +23,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.graphics.red
-import androidx.core.view.children
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.datastore.preferences.preferencesDataStoreFile
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.jivesoftware.smack.android.AndroidSmackInitializer
 import kotlin.math.roundToInt
@@ -64,6 +45,10 @@ class Home : AppCompatActivity(), View.OnClickListener {
     private val layoutTransitionDuration = 500L // milliseconds
 
     private lateinit var filterPrefs : FilterPrefs
+
+    private var minSev = 6
+    private var showDismissed = false
+    private var latestAlertData : ArrayList<Alert>? = null
 
 
     private val msgReceiver : BroadcastReceiver = object : BroadcastReceiver() {
@@ -124,10 +109,12 @@ class Home : AppCompatActivity(), View.OnClickListener {
             // setup viewmodel here - must ENSURE occurs after first initilization of AlertDB as HomeViewModel does not have context
             // Room API observer
             runOnUiThread {
-                val viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+                val viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
                 viewModel.alertLiveData.observe(this) {
                     Log.d("pulsar.xmpp", "New data observed!!")
-                    alertAdaptor?.setNewAlerts(it as ArrayList<Alert>);
+
+                    latestAlertData = (it as ArrayList<Alert>)
+                    updateAlertAdaptor()
 
                 }
             }
@@ -179,9 +166,27 @@ class Home : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    fun initializeFilterUI() {
+    private fun updateAlertAdaptor() {
+        if (latestAlertData == null) { return }
+
+        val filteredData = ArrayList<Alert>()
+        for (i in latestAlertData!!.indices) {
+            if (
+                (latestAlertData!![i].visible == 1 || showDismissed) &&
+                (latestAlertData!![i].sev <= minSev)
+            ) {
+                filteredData.add(latestAlertData!![i])
+            }
+        }
+
+        alertAdaptor?.setNewAlerts(filteredData)
+    }
+
+    private fun initializeFilterUI() {
         filterPrefs.getShowDismissed.distinctUntilChanged().asLiveData().observe(this) {
             findViewById<CheckBox>(R.id.discardedEntries).isChecked = it
+            showDismissed = it
+            updateAlertAdaptor()
         }
 
         val radioButtonIds = arrayOf(
@@ -196,6 +201,8 @@ class Home : AppCompatActivity(), View.OnClickListener {
 
         filterPrefs.getMinSev.distinctUntilChanged().asLiveData().observe(this) {
             findViewById<RadioGroup>(R.id.logLevel).check(radioButtonIds[it])
+            minSev = it
+            updateAlertAdaptor()
         }
 
 

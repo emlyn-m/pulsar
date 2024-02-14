@@ -28,7 +28,7 @@ interface AlertDAO {
     @Query("SELECT * FROM Alert WHERE visible = 1 ORDER BY timestamp DESC")
     fun getAll(): List<Alert>
 
-    @Query("SELECT * FROM Alert WHERE visible = 1 ORDER BY timestamp DESC")
+    @Query("SELECT * FROM Alert ORDER BY timestamp DESC")
     fun getAllObservable() : LiveData<List<Alert>>
 
     @Insert

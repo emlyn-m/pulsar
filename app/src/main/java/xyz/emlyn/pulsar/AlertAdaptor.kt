@@ -37,14 +37,19 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
 
     private fun discardAlert(position: Int) {
 
-        dataSet.removeAt(position)
-        notifyItemRemoved(position)
-        notifyItemRangeChanged(position, dataSet.size)
+        try {
+            dataSet.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, dataSet.size)
+        } catch (e : IndexOutOfBoundsException) {
+            // this occurs when a dismiss is attempted while the dataset is refreshing - can safely be ignored
+        }
     }
 
     fun setNewAlerts(newAlertList : ArrayList<Alert>) {
         Log.d("pulsar.xmpp", "setNewAlerts called")
         dataSet.removeAll { true; }
+        notifyDataSetChanged()
         dataSet.addAll(newAlertList)
         notifyItemRangeChanged(0, newAlertList.size)
     }
