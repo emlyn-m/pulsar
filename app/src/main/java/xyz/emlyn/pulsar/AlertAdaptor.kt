@@ -3,7 +3,6 @@ package xyz.emlyn.pulsar
 import android.content.Context
 import android.content.res.ColorStateList
 import android.icu.text.DateFormat
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,7 +47,6 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
     }
 
     fun setNewAlerts(newAlertList : ArrayList<Alert>) {
-        Log.d("pulsar.xmpp", "setNewAlerts called")
         dataSet.removeAll { true; }
         notifyDataSetChanged()
         dataSet.addAll(newAlertList)

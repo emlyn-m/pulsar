@@ -13,7 +13,6 @@ import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -97,7 +96,6 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             // test servers not reachable - nothing wrong with server
             //      if this is reached, either the device has lost internet connectivity
             //      or the apocalypse is happening
-            Log.d("pulsar.xmpp", "XMPP DC but no servers reachable - client error")
         }
 
         if (!shouldTryReconnect) { return }
@@ -105,23 +103,18 @@ class BackgroundNotificationService : Service(), ConnectionListener {
         reconnectThread.start()
 
         if (!xmppSetup()) {
-            Log.w("pulsar.xmpp", "Intial reconnect failed!")
             Handler(reconnectThread.looper).postDelayed({
                 if (!xmppSetup()) {
-                    Log.w("pulsar.xmpp", "5m reconnect failed!")
                     Handler(reconnectThread.looper).postDelayed({
                         if (!xmppSetup()) {
-                            Log.w("pulsar.xmpp", "15m reconnect failed!")
                             Handler(reconnectThread.looper).postDelayed({
                                 if (xmppSetup()) { shouldTryReconnect = true }
                             }, 15 * 60 * 1000) // 30m total delay
                         } else {
-                            Log.w("pulsar.xmpp", "10m reconnect succeed")
                             shouldTryReconnect = true
                         }
                     }, 10 * 60 * 1000) // 10m total delay
                 } else {
-                    Log.w("pulsar.xmpp", "5m reconnect succeed")
                     shouldTryReconnect = true
                 }
             }, 5 * 60 * 1000) //5m total delay
@@ -135,10 +128,6 @@ class BackgroundNotificationService : Service(), ConnectionListener {
 
 
     private fun onAlertReceived(message : String) {
-        Log.d(
-            "pulsar.xmpp",
-            "Received message: " + message
-        )
 
         // do not show notification if app is in foreground
         var appInForeground = false
@@ -165,7 +154,6 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             msgSev = 0
             msgIconId = msgIcons["pulsar"]!!
             msgTimestamp = System.currentTimeMillis() / 1000
-            Log.e("pulsar.xmpp", e.toString())
         }
 
 
@@ -226,7 +214,6 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             }
             conn1.login()
             if (conn1.isAuthenticated) {
-                Log.d("pulsar.xmpp", "Auth done")
                 sendMessageToActivity("connected")
                 val chatManager = ChatManager.getInstanceFor(conn1)
                 chatManager.addChatListener { chat, _ ->
@@ -240,8 +227,6 @@ class BackgroundNotificationService : Service(), ConnectionListener {
                 return false
             }
         } catch (e: Exception) {
-            Log.e("pulsar.xmpp", "200 "+e.toString())
-
             // network issue - use checks for known sites
             if (e is java.net.UnknownHostException) {
                 connectionClosedOnError(null)

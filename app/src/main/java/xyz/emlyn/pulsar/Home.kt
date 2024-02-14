@@ -13,7 +13,6 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageView
@@ -69,8 +68,6 @@ class Home : AppCompatActivity(), View.OnClickListener {
     override fun onResume() {
         LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver, IntentFilter("xmpp-service-msg"))
 
-        // todo: clear all notifs
-
         super.onResume()
     }
 
@@ -111,8 +108,6 @@ class Home : AppCompatActivity(), View.OnClickListener {
             runOnUiThread {
                 val viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
                 viewModel.alertLiveData.observe(this) {
-                    Log.d("pulsar.xmpp", "New data observed!!")
-
                     latestAlertData = (it as ArrayList<Alert>)
                     updateAlertAdaptor()
 
