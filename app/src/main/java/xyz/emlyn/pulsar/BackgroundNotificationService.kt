@@ -43,7 +43,8 @@ class BackgroundNotificationService : Service(), ConnectionListener {
     )
 
     private lateinit var conn1 : AbstractXMPPConnection
-    val reconnectThread = HandlerThread("xmppreconnectthread")
+    private val reconnectThread = HandlerThread("xmppreconnectthread")
+    private var shouldTryReconnect = true
 
     private fun sendMessageToActivity(msg : String) {
         val msgIntent = Intent("xmpp-service-msg")
@@ -97,28 +98,33 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             Log.d("pulsar.xmpp", "XMPP DC but no servers reachable - client error")
         }
 
+        if (!shouldTryReconnect) { return }
+        shouldTryReconnect = false
         reconnectThread.start()
 
-        // todo: what happens if manual reconnect inside here
         if (!xmppSetup()) {
             Log.w("pulsar.xmpp", "Intial reconnect failed!")
             Handler(reconnectThread.looper).postDelayed({
                 if (!xmppSetup()) {
                     Log.w("pulsar.xmpp", "5m reconnect failed!")
                     Handler(reconnectThread.looper).postDelayed({
-                        if (xmppSetup()) {
+                        if (!xmppSetup()) {
                             Log.w("pulsar.xmpp", "15m reconnect failed!")
                             Handler(reconnectThread.looper).postDelayed({
-                                xmppSetup()
+                                if (xmppSetup()) { shouldTryReconnect = true }
                             }, 15 * 60 * 1000) // 30m total delay
                         } else {
                             Log.w("pulsar.xmpp", "10m reconnect succeed")
+                            shouldTryReconnect = true
                         }
                     }, 10 * 60 * 1000) // 10m total delay
                 } else {
                     Log.w("pulsar.xmpp", "5m reconnect succeed")
+                    shouldTryReconnect = true
                 }
             }, 5 * 60 * 1000) //5m total delay
+        } else {
+            shouldTryReconnect = true
         }
 
 
@@ -209,14 +215,15 @@ class BackgroundNotificationService : Service(), ConnectionListener {
                 return false
             }
             conn1.login()
-            return if (conn1.isAuthenticated) {
+            if (conn1.isAuthenticated) {
                 Log.d("pulsar.xmpp", "Auth done")
                 sendMessageToActivity("connected")
                 val chatManager = ChatManager.getInstanceFor(conn1)
                 chatManager.addChatListener { chat, _ ->
                     chat.addMessageListener { _, message -> onAlertReceived(message.body!!)}
                 }
-                true
+                shouldTryReconnect = true
+                return true
             } else {
                 onAlertReceived("{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP authentication failed!!\"}" )
                 sendMessageToActivity("connFailed")
@@ -269,6 +276,7 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             if (msg == "forceconnect") {
                 Thread { xmppSetup() }.start()
                 reconnectThread.quit()
+
             }
 
         }
