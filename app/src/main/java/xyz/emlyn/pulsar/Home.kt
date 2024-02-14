@@ -60,8 +60,9 @@ class Home : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onResume() {
-        // todo: pull from room api here instead of in oncreate
         LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver, IntentFilter("xmpp-service-msg"))
+
+        // todo: clear all notifs
 
         super.onResume()
     }
@@ -135,11 +136,14 @@ class Home : AppCompatActivity(), View.OnClickListener {
         val fgServiceChannel = NotificationChannel("pulsar_quiet", "Pulsar XMPP Service", NotificationManager.IMPORTANCE_MIN)
         val alertChannel = NotificationChannel("pulsar_hud", "Pulsar Alerts", NotificationManager.IMPORTANCE_HIGH)
 
+
+
         // Register the channel with the system.
         val notificationManager: NotificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(fgServiceChannel)
         notificationManager.createNotificationChannel(alertChannel)
+        notificationManager.cancelAll() // clear all pending notifications
 
 
         // start notification service

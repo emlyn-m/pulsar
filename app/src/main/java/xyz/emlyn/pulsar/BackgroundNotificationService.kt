@@ -3,6 +3,7 @@ package xyz.emlyn.pulsar
 import android.Manifest
 import android.app.ActivityManager
 import android.app.Notification
+import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -43,6 +44,9 @@ class BackgroundNotificationService : Service(), ConnectionListener {
     private lateinit var conn1 : AbstractXMPPConnection
     private val reconnectThread = HandlerThread("xmppreconnectthread")
     private var shouldTryReconnect = true
+
+    private var serviceStarted = false
+
 
     private fun sendMessageToActivity(msg : String) {
         val msgIntent = Intent("xmpp-service-msg")
@@ -168,10 +172,18 @@ class BackgroundNotificationService : Service(), ConnectionListener {
         // create notification
         // i know i know this approach to msgId sucks but fuck it we ball todo make this better
         val msgId : Int = UUID.randomUUID().hashCode()
+
+        val openAppIntent = Intent(this, Home::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val openPendingIntent = PendingIntent.getActivity(this, 0, openAppIntent, PendingIntent.FLAG_IMMUTABLE)
+
         if (!appInForeground && msgSev < 5) {
             val builder = NotificationCompat.Builder(this, "pulsar_hud")
                 .setSmallIcon(R.drawable.mask_circle)
                 .setContentTitle(msgBody)
+                .setContentIntent(openPendingIntent)
+                .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
 
@@ -252,15 +264,18 @@ class BackgroundNotificationService : Service(), ConnectionListener {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
 
-        // notification as required for foreground service
-        val backgroundServiceNotification = NotificationCompat.Builder(this, "pulsar_quiet")
-            .setSmallIcon(R.drawable.mask_circle)
-            .setContentTitle("Pulsar XMPP running in background")
-            .setPriority(NotificationCompat.PRIORITY_MIN)
-            .build()
+        if (!serviceStarted) {
+            // notification as required for foreground service
+            val backgroundServiceNotification = NotificationCompat.Builder(this, "pulsar_quiet")
+                .setSmallIcon(R.drawable.mask_circle)
+                .setContentTitle("Pulsar XMPP running in background")
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .build()
 
 
-        startForeground(1, backgroundServiceNotification)
+            startForeground(1, backgroundServiceNotification)
+            serviceStarted = true
+        }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver, IntentFilter("pulsar-activity-msg"))
 
