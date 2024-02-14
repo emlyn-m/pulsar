@@ -31,32 +31,23 @@ class Home : AppCompatActivity(), View.OnClickListener {
 
     private var alertAdaptor : AlertAdaptor? = null
 
-    private lateinit var bgNotifService : BackgroundNotificationService
-    private var isBound = false
     private var xmppConnected = false
     private var currentlyConnecting = false
 
-    private val connection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            isBound = true
-            val binder = service as BackgroundNotificationService.BackgroundNotificationBinder
-            bgNotifService = binder.getService()
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isBound = false
-        }
-    }
 
     private val msgReceiver : BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context : Context, intent : Intent) {
             val msg : String = intent.getStringExtra("msgBody") ?: ""
-            Log.d("pulsar.xmpp", "msg: " + msg)
-
-            if (msg == "disconnected") { xmppConnected = false; setXmppStatus() }
-            if (msg == "connected") { xmppConnected = true; setXmppStatus() }
-            if (msg == "connFailed") { currentlyConnecting = false }
+            if (msg == "disconnected" || msg == "connFailed") { xmppConnected = false; currentlyConnecting = false; setXmppStatus() }
+            if (msg == "connected") { xmppConnected = true; currentlyConnecting = false; setXmppStatus() }
         }
+    }
+
+    private fun sendMessageToService(msg : String) {
+        val msgIntent = Intent("pulsar-activity-msg")
+        msgIntent.putExtra("msgBody", msg)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(msgIntent)
+
     }
 
     override fun onResume() {
@@ -130,12 +121,6 @@ class Home : AppCompatActivity(), View.OnClickListener {
         // note: this requires running as a foreground service, due to Android O background
         //      exec limits (background service killed 10s after app enters idle)
         startForegroundService(Intent(this, BackgroundNotificationService::class.java))
-        Intent(this, BackgroundNotificationService::class.java).also { intent ->
-            run {
-                bindService(intent, connection, Context.BIND_AUTO_CREATE)
-            }
-        }
-
     }
 
     private fun setXmppStatus() {
@@ -155,23 +140,16 @@ class Home : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         //check if xmpp connection down, if so, try trigger connection
-        // todo: onclick, update serverstatus.text to connecting... and disregard any further clicks until that attempt has been resolved
-        if (!isBound) { return }
         if (xmppConnected) { return; }
         if (currentlyConnecting) { return; }
 
         currentlyConnecting = true
+        findViewById<TextView>(R.id.serverStatus).text = getString(R.string.status_connecting)
+        findViewById<TextView>(R.id.serverStatus).setTextColor(getColor(R.color.status_connecting))
+        findViewById<ImageView>(R.id.serverStatusIcon).backgroundTintList = ColorStateList.valueOf(getColor(R.color.status_connecting))
 
-        Thread {
-            bgNotifService.xmppSetup()
-        }.start()
-    }
 
-    override fun onStop() {
-        if (isBound) {
-            bgNotifService.unbindService(connection)
-        }
-        super.onStop()
+        sendMessageToService("forceconnect")
     }
 
     override fun onPause() {

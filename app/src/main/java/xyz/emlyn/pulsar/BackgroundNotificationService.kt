@@ -4,8 +4,10 @@ import android.Manifest
 import android.app.ActivityManager
 import android.app.Notification
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Binder
 import android.os.IBinder
@@ -38,12 +40,6 @@ class BackgroundNotificationService : Service(), ConnectionListener {
     )
 
     private lateinit var conn1 : AbstractXMPPConnection
-
-    private val binder = BackgroundNotificationBinder()
-
-    inner class BackgroundNotificationBinder : Binder() {
-        fun getService() : BackgroundNotificationService = this@BackgroundNotificationService
-    }
 
     private fun sendMessageToActivity(msg : String) {
         val msgIntent = Intent("xmpp-service-msg")
@@ -184,8 +180,8 @@ class BackgroundNotificationService : Service(), ConnectionListener {
 
             conn1.connect()
             if (!conn1.isConnected) {
-                onAlertReceived("{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP connection failed!!\"}" )
                 sendMessageToActivity("connFailed")
+                return
             }
             conn1.login()
             if (conn1.isAuthenticated) {
@@ -198,20 +194,17 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             } else {
                 onAlertReceived("{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP authentication failed!!\"}" )
                 sendMessageToActivity("connFailed")
+                return
             }
         } catch (e: Exception) {
-            Log.e("pulsar.xmpp", e.toString())
+            Log.e("pulsar.xmpp", "200 "+e.toString())
 
             // network issue - use checks for known sites
             if (e is java.net.UnknownHostException) {
                 connectionClosedOnError(null)
-                sendMessageToActivity("connFailed")
-            } else {
-                onAlertReceived(
-                    "{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP Error: " + e.toString()
-                        .replace("\"", "'") + "\"}")
-                sendMessageToActivity("connFailed")
             }
+            sendMessageToActivity("connFailed")
+
         }
     }
 
@@ -236,9 +229,28 @@ class BackgroundNotificationService : Service(), ConnectionListener {
 
 
         startForeground(1, backgroundServiceNotification)
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver, IntentFilter("pulsar-activity-msg"))
+
         return START_STICKY
     }
-    override fun onBind(intent: Intent?): IBinder {
-        return binder
+
+    private val msgReceiver : BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context : Context, intent : Intent) {
+            val msg : String = intent.getStringExtra("msgBody") ?: ""
+
+            if (msg == "forceconnect") { Thread { xmppSetup() }.start() }
+
+        }
+    }
+
+    override fun onDestroy() {
+        LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(msgReceiver)
+
+        super.onDestroy()
+    }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
     }
 }
