@@ -186,6 +186,7 @@ class Home : AppCompatActivity(), View.OnClickListener {
         filterPrefs.getShowDismissed.distinctUntilChanged().asLiveData().observe(this) {
             findViewById<CheckBox>(R.id.discardedEntries).isChecked = it
             showDismissed = it
+            alertAdaptor?.showingDismissed = it
             updateAlertAdaptor()
         }
 

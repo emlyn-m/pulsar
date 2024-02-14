@@ -39,6 +39,9 @@ interface AlertDAO {
 
     @Query("UPDATE Alert SET visible = 0 WHERE uid = :uid")
     fun discardAlert(uid : Int)
+
+    @Query("UPDATE Alert SET visible = 1 WHERE uid = :uid")
+    fun restoreAlert(uid : Int)
 }
 
 @Database(entities = [Alert::class], version = 2)

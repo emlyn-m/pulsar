@@ -34,6 +34,7 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
         }
     }
 
+    public var showingDismissed = false
 
     private fun discardAlert(position: Int) {
 
@@ -52,6 +53,7 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
         notifyDataSetChanged()
         dataSet.addAll(newAlertList)
         notifyItemRangeChanged(0, newAlertList.size)
+        notifyDataSetChanged()
     }
 
     // Create new views (invoked by the layout manager)
@@ -84,17 +86,33 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
             DateFormat.getPatternInstance(DateFormat.HOUR24_MINUTE).format(Date(dataSet[position].timestamp * 1000))
 
 
-        viewHolder.discard.setOnClickListener {run {
-            discardAlert(viewHolder.adapterPosition)
+        if (!showingDismissed || dataSet[position].visible == 1) {
+            viewHolder.discard.text = ctxt.getString(R.string.discard)
+            viewHolder.discard.setOnClickListener {
+                run {
+                    discardAlert(viewHolder.adapterPosition)
 
-            // remove item from database
-            Thread {
-                val db = AlertDB.getInstance(viewHolder.icon.context)
+                    // remove item from database
+                    Thread {
+                        val db = AlertDB.getInstance(viewHolder.icon.context)
 
-                db.alertDao().discardAlert(Integer.parseInt(viewHolder.id.text as String))
-            }.start()
+                        db.alertDao().discardAlert(Integer.parseInt(viewHolder.id.text as String))
+                    }.start()
 
-        }}
+                }
+            }
+        } else {
+            viewHolder.discard.text = ctxt.getString(R.string.restore)
+            viewHolder.discard.setOnClickListener {
+                run {
+                    Thread {
+                        val db = AlertDB.getInstance(viewHolder.icon.context)
+                        db.alertDao().restoreAlert(Integer.parseInt(viewHolder.id.text as String))
+                    }.start()
+
+                }
+            }
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

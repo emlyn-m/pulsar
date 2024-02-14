@@ -5,6 +5,7 @@
     <string name="server_offline">Offline</string>
     <string name="status_connecting">Connecting...</string>
     <string name="discard">Discard</string>
+    <string name="restore">Restore</string>
 
     <string name="notif_channel_name">Pulsar</string>
     <string name="notif_channel_desc">XMPP Service</string>

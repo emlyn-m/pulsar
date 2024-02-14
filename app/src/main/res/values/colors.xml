@@ -16,7 +16,6 @@
     <color name="shadow">#ffff</color>
     <color name="accent">@color/purple_200</color>
 
-    <!-- TODO: Fix these colors -->
     <color name="status_online">#ff00ff00</color>
     <color name="status_offline">#ffff0000</color>
     <color name="status_connecting">#ffffff00</color>
