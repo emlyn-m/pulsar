@@ -43,6 +43,7 @@ class BackgroundNotificationService : Service(), ConnectionListener {
     )
 
     private lateinit var conn1 : AbstractXMPPConnection
+    val reconnectThread = HandlerThread("xmppreconnectthread")
 
     private fun sendMessageToActivity(msg : String) {
         val msgIntent = Intent("xmpp-service-msg")
@@ -96,9 +97,9 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             Log.d("pulsar.xmpp", "XMPP DC but no servers reachable - client error")
         }
 
-        val reconnectThread = HandlerThread("xmppreconnectthread")
         reconnectThread.start()
 
+        // todo: what happens if manual reconnect inside here
         if (!xmppSetup()) {
             Log.w("pulsar.xmpp", "Intial reconnect failed!")
             Handler(reconnectThread.looper).postDelayed({
@@ -265,7 +266,10 @@ class BackgroundNotificationService : Service(), ConnectionListener {
         override fun onReceive(context : Context, intent : Intent) {
             val msg : String = intent.getStringExtra("msgBody") ?: ""
 
-            if (msg == "forceconnect") { Thread { xmppSetup() }.start() }
+            if (msg == "forceconnect") {
+                Thread { xmppSetup() }.start()
+                reconnectThread.quit()
+            }
 
         }
     }
