@@ -22,7 +22,7 @@
     <color name="status_connecting">#ffffff00</color>
 
     <color name="sev_emerg">#ff00</color>
-    <color name="sev_alert">#ff00</color>
+    <color name="sev_alert">#FFFF5F15</color>
     <color name="sev_error">#fff0</color>
     <color name="sev_warn">#ff7df9ff</color>
     <color name="sev_info">@color/accent</color>
