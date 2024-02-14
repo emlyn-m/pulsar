@@ -43,6 +43,7 @@
             >
 
             <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/minSev0"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/sev_emerg"
@@ -51,6 +52,7 @@
                 android:textSize="10sp" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/minSev1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/sev_alert"
@@ -59,6 +61,7 @@
                 android:textSize="10sp" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/minSev3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/sev_error"
@@ -67,6 +70,7 @@
                 android:textSize="10sp" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/minSev4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/sev_warn"
@@ -75,6 +79,7 @@
                 android:textSize="10sp" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/minSev6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/sev_info"

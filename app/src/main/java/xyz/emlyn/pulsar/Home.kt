@@ -19,17 +19,37 @@ import android.os.IBinder
 import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.CheckBox
 import android.widget.ImageView
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.graphics.red
+import androidx.core.view.children
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.jivesoftware.smack.android.AndroidSmackInitializer
 import kotlin.math.roundToInt
 
@@ -42,6 +62,8 @@ class Home : AppCompatActivity(), View.OnClickListener {
     private var currentlyConnecting = false
 
     private val layoutTransitionDuration = 500L // milliseconds
+
+    private lateinit var filterPrefs : FilterPrefs
 
 
     private val msgReceiver : BroadcastReceiver = object : BroadcastReceiver() {
@@ -72,6 +94,8 @@ class Home : AppCompatActivity(), View.OnClickListener {
         window.navigationBarColor = getColor(R.color.black)
 
         setContentView(R.layout.activity_home)
+
+        filterPrefs = FilterPrefs(applicationContext)
 
 
         findViewById<ConstraintLayout>(R.id.homeRootLayout).layoutTransition = LayoutTransition()
@@ -132,10 +156,8 @@ class Home : AppCompatActivity(), View.OnClickListener {
 
 
         // create notification channels
-
         val fgServiceChannel = NotificationChannel("pulsar_quiet", "Pulsar XMPP Service", NotificationManager.IMPORTANCE_MIN)
         val alertChannel = NotificationChannel("pulsar_hud", "Pulsar Alerts", NotificationManager.IMPORTANCE_HIGH)
-
 
 
         // Register the channel with the system.
@@ -150,6 +172,46 @@ class Home : AppCompatActivity(), View.OnClickListener {
         // note: this requires running as a foreground service, due to Android O background
         //      exec limits (background service killed 10s after app enters idle)
         startForegroundService(Intent(this, BackgroundNotificationService::class.java))
+
+
+        initializeFilterUI()
+
+
+    }
+
+    fun initializeFilterUI() {
+        filterPrefs.getShowDismissed.distinctUntilChanged().asLiveData().observe(this) {
+            findViewById<CheckBox>(R.id.discardedEntries).isChecked = it
+        }
+
+        val radioButtonIds = arrayOf(
+            R.id.minSev0,
+            R.id.minSev1,
+            0,
+            R.id.minSev3,
+            R.id.minSev4,
+            0,
+            R.id.minSev6
+        )
+
+        filterPrefs.getMinSev.distinctUntilChanged().asLiveData().observe(this) {
+            findViewById<RadioGroup>(R.id.logLevel).check(radioButtonIds[it])
+        }
+
+
+        findViewById<CheckBox>(R.id.discardedEntries).setOnClickListener {
+            lifecycleScope.launch {
+                filterPrefs.setShowDismissed((it as CheckBox).isChecked)
+            }
+        }
+
+        findViewById<RadioGroup>(R.id.logLevel).setOnCheckedChangeListener { _, checkedId ->
+            lifecycleScope.launch {
+                filterPrefs.setMinSev(radioButtonIds.indexOf(checkedId))
+            }
+        }
+
+
     }
 
     private fun setXmppStatus() {
