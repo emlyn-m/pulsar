@@ -33,17 +33,17 @@ XMPP_PORT=5222
 
 <table>
 <tr>
-<th align="center">
+<th align="right">
 <img width="441" height="1">
     <b>Category</b>
 </th>
-<th align="center">
+<th align="left">
 <img width="441" height="1">
     <b>Severity</b>
 </th>
 </tr>
-<tr style="align: center;">
-<td >
+<tr>
+<td align="right">
 
 <table>
     <tr>
@@ -90,12 +90,12 @@ XMPP_PORT=5222
 
 </table>
 </td>
-<td>
+<td align="left" valign="top">
 
 <table>
     <tr>
         <th><code>json</code></th>
-        <th><p>color</p></th>
+        <th><p>color</th>
     </tr>
     <tr>
         <td><code>{sev: 0}</code></td><td><img src="https://fpoimg.com/20x20?text=text&bg_color=ff4c4c&text_color=ff4c4c" /><code>#ff4c4c</code></td>
