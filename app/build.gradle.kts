@@ -13,11 +13,13 @@ android {
     buildFeatures.buildConfig = true
 
     val props = Properties()
-    props.load(project.rootProject.file("local.properties").inputStream())
-    val XMPP_USER = props.getProperty("XMPP_USER")
-    val XMPP_PASS = props.getProperty("XMPP_PASS")
-	val XMPP_ADDR = props.getProperty("XMPP_ADDR")
-	val XMPP_PORT = props.getProperty("XMPP_PORT")
+	if (rootProject.file("local.properties").exists()) {
+	    properties.load(rootProject.file("local.properties").newDataInputStream())
+	}
+    val XMPP_USER = props.getProperty("XMPP_USER", "")
+    val XMPP_PASS = props.getProperty("XMPP_PASS", "")
+	val XMPP_ADDR = props.getProperty("XMPP_ADDR", "")
+	val XMPP_PORT = props.getProperty("XMPP_PORT", "")
 
 
     defaultConfig {
