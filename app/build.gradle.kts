@@ -14,7 +14,7 @@ android {
 
     val props = Properties()
 	if (rootProject.file("local.properties").exists()) {
-	    properties.load(rootProject.file("local.properties").newDataInputStream())
+	    props.load(rootProject.file("local.properties").inputStream())
 	}
     val XMPP_USER = props.getProperty("XMPP_USER", "")
     val XMPP_PASS = props.getProperty("XMPP_PASS", "")
