@@ -29,15 +29,21 @@ import java.net.HttpURLConnection
 import java.net.InetAddress
 import java.net.URL
 import java.util.UUID
+import android.util.Log
 
 
 class BackgroundNotificationService : Service(), ConnectionListener {
 
     private val msgIcons = hashMapOf(
-        Pair("server", R.drawable.mask_circle), // general server events
-        Pair("nzpvt", R.drawable.mask_rounded_rect), // nzpvt subdomain
-        Pair("exyz", R.drawable.mask_circle), // main website
         Pair("pulsar", R.drawable.mask_circle), // pulsar alert service
+        Pair("server", R.drawable.mask_circle), // general server events
+        Pair("database", R.drawable.mask_circle), // 
+        Pair("media", R.drawable.mask_circle), // 
+        Pair("messaging", R.drawable.mask_circle), // 
+        Pair("backup", R.drawable.mask_circle), // 
+        Pair("web", R.drawable.mask_circle), // 
+        Pair("network", R.drawable.mask_circle), // 
+        Pair("human", R.drawable.mask_circle), // 
     )
 
     private lateinit var conn1 : AbstractXMPPConnection
@@ -196,10 +202,10 @@ class BackgroundNotificationService : Service(), ConnectionListener {
         try {
             val config: XMPPTCPConnectionConfiguration = XMPPTCPConnectionConfiguration.builder()
                 .setUsernameAndPassword(BuildConfig.XMPP_USER, BuildConfig.XMPP_PASS)
-                .setHostAddress(InetAddress.getByName("emlyn.xyz"))
+                .setHostAddress(InetAddress.getByName(BuildConfig.XMPP_ADDR))
                 .setSecurityMode(ConnectionConfiguration.SecurityMode.required)
-                .setXmppDomain(JidCreate.domainBareFrom("emlyn.xyz"))
-                .setPort(5222)
+                .setXmppDomain(JidCreate.domainBareFrom(BuildConfig.XMPP_ADDR))
+                .setPort((BuildConfig.XMPP_PORT).toInt())
                 .build()
 
 
@@ -207,13 +213,17 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             conn1.addConnectionListener(this)
 
 
+            Log.w("pulsar", "preconn");
             conn1.connect()
+            Log.w("pulsar", "postconn");
             if (!conn1.isConnected) {
+                Log.w("pulsar", "Initial connection failed")
                 sendMessageToActivity("connFailed")
                 return false
             }
             conn1.login()
             if (conn1.isAuthenticated) {
+                Log.w("pulsar", "connected/authed");
                 sendMessageToActivity("connected")
                 val chatManager = ChatManager.getInstanceFor(conn1)
                 chatManager.addChatListener { chat, _ ->
@@ -224,13 +234,16 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             } else {
                 onAlertReceived("{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP authentication failed!!\"}" )
                 sendMessageToActivity("connFailed")
+                Log.w("pulsar", "Auth failed");
                 return false
             }
         } catch (e: Exception) {
             // network issue - use checks for known sites
             if (e is java.net.UnknownHostException) {
+                Log.w("pulsar", "uhex")
                 connectionClosedOnError(null)
             }
+            Log.w("pulsar", "Network issue | " + e);
             sendMessageToActivity("connFailed")
 
         }

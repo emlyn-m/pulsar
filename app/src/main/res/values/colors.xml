@@ -20,9 +20,9 @@
     <color name="status_offline">#ffff0000</color>
     <color name="status_connecting">#ffffff00</color>
 
-    <color name="sev_emerg">#ff00</color>
-    <color name="sev_alert">#FFFF5F15</color>
-    <color name="sev_error">#fff0</color>
+    <color name="sev_emerg">#ffff4c4c</color>
+    <color name="sev_alert">#ffff864e</color>
+    <color name="sev_error">#ffe5e564</color>
     <color name="sev_warn">#ff7df9ff</color>
     <color name="sev_info">@color/accent</color>
 
