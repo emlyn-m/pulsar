@@ -58,5 +58,4 @@ XMPP_PORT=5222
 Here's some ways I use this. Feel free to copy them!  
 These all use [sendxmpp-rs](https://github.com/moparisthebest/sendxmpp-rs).
 
-- **shutdown** - *[systemd](scripts/shutdown.service), [shell](scripts/shutdown.sh)*
-- **tailscale** - *[systemd](scripts/tailscale.service), [shell](scripts/tailscale.sh)*
+- **coming soon.**
