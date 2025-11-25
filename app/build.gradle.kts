@@ -16,9 +16,9 @@ android {
 	if (rootProject.file("local.properties").exists()) {
 	    props.load(rootProject.file("local.properties").inputStream())
 	}
-    val XMPP_USER = props.getProperty("XMPP_USER", "test_user")
-    val XMPP_PASS = props.getProperty("XMPP_PASS", "test_pass")
-	val XMPP_ADDR = props.getProperty("XMPP_ADDR", "test_addr.example.com")
+    val XMPP_USER = props.getProperty("XMPP_USER", "\"test_user\"")
+    val XMPP_PASS = props.getProperty("XMPP_PASS", "\"test_pass\"")
+	val XMPP_ADDR = props.getProperty("XMPP_ADDR", "\"test_addr.example.com\"")
 	val XMPP_PORT = props.getProperty("XMPP_PORT", "5222")
 
 
