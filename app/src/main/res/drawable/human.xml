@@ -3,11 +3,12 @@
     android:viewportHeight="315"
     android:width="50dp"
     android:height="50dp">
-    <path
-        android:pathData="M0 0L342 0 342 315L0 315"
-        android:fillColor="#FF0000" />
     <group
-        android:rotation="45">
+        android:rotation="45"
+        android:scaleX="-1"
+        android:scaleY="-1"
+        android:translateX="170.5061"
+        android:translateY="312.6259">
         <path
             android:pathData="M0 200v-200h200a100 100 90 0 1 0 200a100 100 90 0 1 -200 0z"
             android:fillColor="#000000" />

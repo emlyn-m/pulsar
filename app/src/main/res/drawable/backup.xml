@@ -7,22 +7,19 @@
         android:pathData="M0 0L100 0L100 100L0 100"
         android:fillColor="#FFFFFF" />
     <path
-        android:pathData="M95 50A45 45 0 0 1 5 50A45 45 0 0 1 95 50Z"
-        android:fillColor="#FFFFFF" />
+        android:pathData="M90 50A40 40 0 0 1 10 50A40 40 0 0 1 90 50Z"
+        android:fillColor="#000000" />
     <path
         android:pathData="M80 50A30 30 0 0 1 20 50A30 30 0 0 1 80 50Z"
-        android:fillColor="#000000" />
-    <path
-        android:pathData="M75 50A25 25 0 0 1 25 50A25 25 0 0 1 75 50Z"
         android:fillColor="#FFFFFF" />
     <path
-        android:pathData="M10 50L50 50L10 75z"
+        android:pathData="M0 50L50 50L0 85z"
         android:fillColor="#FFFFFF" />
     <path
-        android:pathData="M55 50A5 5 0 0 1 45 50A5 5 0 0 1 55 50Z"
+        android:pathData="M60 50A10 10 0 0 1 40 50A10 10 0 0 1 60 50Z"
         android:fillColor="#000000" />
     <path
-        android:pathData="M15 50L22.5 55L30 50z"
+        android:pathData="M0 50L15 65L30 50z"
         android:fillColor="#000000"
         android:strokeColor="#000000"
         android:strokeWidth="1" />
