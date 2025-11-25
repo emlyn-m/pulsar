@@ -47,8 +47,8 @@ XMPP_PORT=5222
 
 <table>
     <tr>
-        <th><img width="180" height="1"><code>json</code></th>
-        <th><img width="180" height="1">icon</th>
+        <th><code>json</code></th>
+        <th>icon</th>
     </tr>
     <tr>
         <td><code>{class: "pulsar"}</code></td>
@@ -94,8 +94,8 @@ XMPP_PORT=5222
 
 <table>
     <tr>
-        <th><img width="180" height="1"><code>json</code></th>
-        <th><img width="180" height="1"><p>color</p></th>
+        <th><code>json</code></th>
+        <th><p>color</p></th>
     </tr>
     <tr>
         <td><code>{sev: 0}</code></td><td><img src="https://fpoimg.com/20x20?text=text&bg_color=ff4c4c&text_color=ff4c4c" /><code>#ff4c4c</code></td>
