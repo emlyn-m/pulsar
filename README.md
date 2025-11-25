@@ -35,15 +35,15 @@ XMPP_PORT=5222
 
 |```json``` | icon |
 |--|--|
-|```{class: "pulsar"}```    | ![](/app/src/main/res/drawable/pulsar.svg) |
-|```{class: "server"}```    | ![](/app/src/main/res/drawable/server.svg) |
-|```{class: "database"}```  | ![](/app/src/main/res/drawable/db.svg) |
-|```{class: "media"}```     | ![](/app/src/main/res/drawable/media.svg) |
-|```{class: "messaging"}``` | ![](/app/src/main/res/drawable/msg.svg) |
-|```{class: "backup"}```    | ![](/app/src/main/res/drawable/backup.svg) |
-|```{class: "web"}```       | ![](/app/src/main/res/drawable/web.svg) |
-|```{class: "network"}```   | ![](/app/src/main/res/drawable/net.svg) |
-|```{class: "human"}```     | ![](/app/src/main/res/drawable/human.svg) |
+|```{class: "pulsar"}```    | ![img_alt](/app/src/main/res/drawable/svgs/pulsar.svg) |
+|```{class: "server"}```    | ![img_alt](/app/src/main/res/drawable/svgs/server.svg) |
+|```{class: "database"}```  | ![img_alt](/app/src/main/res/drawable/svgs/db.svg) |
+|```{class: "media"}```     | ![img_alt](/app/src/main/res/drawable/svgs/media.svg) |
+|```{class: "messaging"}``` | ![img_alt](/app/src/main/res/drawable/svgs/msg.svg) |
+|```{class: "backup"}```    | ![img_alt](/app/src/main/res/drawable/svgs/backup.svg) |
+|```{class: "web"}```       | ![img_alt](/app/src/main/res/drawable/svgs/web.svg) |
+|```{class: "network"}```   | ![img_alt](/app/src/main/res/drawable/svgs/net.svg) |
+|```{class: "human"}```     | ![img_alt](/app/src/main/res/drawable/svgs/human.svg) |
 
 **severity**
 |```json``` | color |
