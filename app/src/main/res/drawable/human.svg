@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" height="50" width="50" viewBox="0 0 342 315">
+ <defs>
+   <g id="heart">
+   <path d="M0 200 v-200 h200      a100,100 90 0,1 0,200     a100,100 90 0,1 -200,0     z"/>
+  </g>
+ </defs>
+  <use xlink:href="#heart" style="" fill="000" transform="rotate(225,150,121) scale(.75) translate(37.5, 37.5)"/>
+</svg>

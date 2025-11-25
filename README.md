@@ -1,9 +1,8 @@
 # ~Pulsar Server Monitor
 
 <!-- TO ADD:
-
 --Row 1-- 
-ci badge mit license
+CI badge,  MIT License icon
 
 -- Row 2 --
 screenshot of home screen
@@ -36,15 +35,15 @@ XMPP_PORT=5222
 
 |```json``` | icon |
 |--|--|
-|```{class: "pulsar"}```    | ![](/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp) |
-|```{class: "server"}```    | ![](/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp) |
-|```{class: "database"}```  | ![](/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp) |
-|```{class: "media"}```     | ![](/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp) |
-|```{class: "messaging"}``` | ![](/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp) |
-|```{class: "backup"}```    | ![](/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp) |
-|```{class: "web"}```       | ![](/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp) |
-|```{class: "network"}```   | ![](/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp) |
-|```{class: "human"}```     | ![](/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp) |
+|```{class: "pulsar"}```    | ![](/app/src/main/res/drawable/pulsar.svg) |
+|```{class: "server"}```    | ![](/app/src/main/res/drawable/server.svg) |
+|```{class: "database"}```  | ![](/app/src/main/res/drawable/db.svg) |
+|```{class: "media"}```     | ![](/app/src/main/res/drawable/media.svg) |
+|```{class: "messaging"}``` | ![](/app/src/main/res/drawable/msg.svg) |
+|```{class: "backup"}```    | ![](/app/src/main/res/drawable/backup.svg) |
+|```{class: "web"}```       | ![](/app/src/main/res/drawable/web.svg) |
+|```{class: "network"}```   | ![](/app/src/main/res/drawable/net.svg) |
+|```{class: "human"}```     | ![](/app/src/main/res/drawable/human.svg) |
 
 **severity**
 |```json``` | color |
