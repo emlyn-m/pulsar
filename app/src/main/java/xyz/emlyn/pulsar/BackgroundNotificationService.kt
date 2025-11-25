@@ -35,15 +35,15 @@ import android.util.Log
 class BackgroundNotificationService : Service(), ConnectionListener {
 
     private val msgIcons = hashMapOf(
-        Pair("pulsar", R.drawable.mask_circle), // pulsar alert service
-        Pair("server", R.drawable.mask_circle), // general server events
-        Pair("database", R.drawable.mask_circle), // 
-        Pair("media", R.drawable.mask_circle), // 
-        Pair("messaging", R.drawable.mask_circle), // 
-        Pair("backup", R.drawable.mask_circle), // 
-        Pair("web", R.drawable.mask_circle), // 
-        Pair("network", R.drawable.mask_circle), // 
-        Pair("human", R.drawable.mask_circle), // 
+        Pair("pulsar", R.drawable.pulsar), // pulsar alert service
+        Pair("server", R.drawable.server), // general server events
+        Pair("database", R.drawable.db), // 
+        Pair("media", R.drawable.media), // 
+        Pair("messaging", R.drawable.msg), // 
+        Pair("backup", R.drawable.backup), // 
+        Pair("web", R.drawable.web), // 
+        Pair("network", R.drawable.net), // 
+        Pair("human", R.drawable.human), // 
     )
 
     private lateinit var conn1 : AbstractXMPPConnection
