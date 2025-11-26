@@ -97,9 +97,9 @@ XMPP_PORT=5222
 <td align="left" valign="top">
 
 <table>
-    <tr>
-        <th><code>json</code></th>
-        <th><p>color</th>
+    <tr valign="bottom">
+        <th align="left"><code>json</code></th>
+        <th align="left">color</th>
     </tr>
     <tr>
         <td><code>{sev: 0}</code></td><td><img src="https://fpoimg.com/20x20?text=text&bg_color=ff4c4c&text_color=ff4c4c" /><code>#ff4c4c</code></td>
