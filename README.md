@@ -121,6 +121,6 @@ XMPP_PORT=5222
 
 ## Scripts
 Here's some ways I use this. Feel free to copy them!  
-These all use [sendxmpp-rs](https://github.com/moparisthebest/sendxmpp-rs).
+These all use [txmppc](https://holmeinbuch.de/repo/txmppc/file?name=txmppc.c).
 
 - **coming soon.**
