@@ -1,4 +1,4 @@
-# ~Pulsar Server Monitor
+# Pulsar Server Monitor
 
 <div style="align:center;">
 <img src="https://github.com/emlyn-m/pulsar/actions/workflows/android.yml/badge.svg" />
