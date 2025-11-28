@@ -62,6 +62,15 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
             return ViewHolder(view)
     }
 
+    fun min(v1: Int, v2: Int): Int {
+        if (v1 < v2) { return v1 }
+        return v2
+    }
+    fun max(v1: Int, v2: Int): Int {
+        if (v1 > v2) { return v1 }
+        return v2
+    }
+
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
 
@@ -69,9 +78,14 @@ class AlertAdaptor(private val dataSet: ArrayList<Alert>, private val ctxt: Cont
         // contents of the view with that element
         viewHolder.id.text = dataSet[position].uid.toString()
         viewHolder.msg.text = dataSet[position].msg
-        viewHolder.sev.text = ctxt.resources.getStringArray(R.array.sevString)[dataSet[position].sev]
+        var sev = dataSet[position].sev
+        sev = max(sev, 0)
+        sev = min(sev, ctxt.resources.getStringArray(R.array.sevString).size - 1)
+        sev = min(sev, ctxt.resources.getIntArray(R.array.sev_color).size - 1)
 
-        val sevColor = ColorStateList.valueOf(ctxt.resources.getIntArray(R.array.sev_color)[dataSet[position].sev])
+        viewHolder.sev.text = ctxt.resources.getStringArray(R.array.sevString)[sev]
+
+        val sevColor = ColorStateList.valueOf(ctxt.resources.getIntArray(R.array.sev_color)[sev])
         viewHolder.timestamp.setTextColor(sevColor)
         viewHolder.sev.setTextColor(sevColor)
 

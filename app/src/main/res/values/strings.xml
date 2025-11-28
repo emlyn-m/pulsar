@@ -26,5 +26,6 @@
         <item>@string/sev_warn</item> <!-- 4 IE: Attempted intrusions, degraded speeds, IP change -->
         <item> </item>
         <item>@string/sev_info</item> <!-- 6 IE: Journal parsed succesfully -->
+        <item> </item>
     </string-array>
 </resources>
