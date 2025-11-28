@@ -2,6 +2,7 @@
 
 <div style="align:center;">
 <img src="https://github.com/emlyn-m/pulsar/actions/workflows/android.yml/badge.svg" />
+<img src="logo.png">
 </div>
 
 <!-- TO ADD:
