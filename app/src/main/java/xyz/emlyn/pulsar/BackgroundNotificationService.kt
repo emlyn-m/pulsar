@@ -156,7 +156,7 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             msgTimestamp = msgJObj.getLong("timestamp")
             msgIconId = msgIcons[msgJObj.getString("class")]!!
         } catch (e : org.json.JSONException) {
-            msgBody = "RECEIVED MALFORMED INPUT: " + message
+            msgBody = "[e_malformed] " + message
             msgSev = 0
             msgIconId = msgIcons["pulsar"]!!
             msgTimestamp = System.currentTimeMillis() / 1000
@@ -213,17 +213,13 @@ class BackgroundNotificationService : Service(), ConnectionListener {
             conn1.addConnectionListener(this)
 
 
-            Log.w("pulsar", "preconn");
             conn1.connect()
-            Log.w("pulsar", "postconn");
             if (!conn1.isConnected) {
-                Log.w("pulsar", "Initial connection failed")
                 sendMessageToActivity("connFailed")
                 return false
             }
             conn1.login()
             if (conn1.isAuthenticated) {
-                Log.w("pulsar", "connected/authed");
                 sendMessageToActivity("connected")
                 val chatManager = ChatManager.getInstanceFor(conn1)
                 chatManager.addChatListener { chat, _ ->
@@ -232,18 +228,15 @@ class BackgroundNotificationService : Service(), ConnectionListener {
                 shouldTryReconnect = true
                 return true
             } else {
-                onAlertReceived("{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"XMPP authentication failed!!\"}" )
+                onAlertReceived("{\"sev\":0, \"class\":\"pulsar\", \"timestamp\":" + (System.currentTimeMillis() / 1000) + ", \"body\": \"[e_xmpp_auth_fail]\"}" )
                 sendMessageToActivity("connFailed")
-                Log.w("pulsar", "Auth failed");
                 return false
             }
         } catch (e: Exception) {
             // network issue - use checks for known sites
             if (e is java.net.UnknownHostException) {
-                Log.w("pulsar", "uhex")
                 connectionClosedOnError(null)
             }
-            Log.w("pulsar", "Network issue | " + e);
             sendMessageToActivity("connFailed")
 
         }
