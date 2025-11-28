@@ -14,7 +14,7 @@
         android:background="#8000" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="@color/black"
+        android:background="@color/background_overlay"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -97,8 +97,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/logLevel"
             android:text="@string/show_discarded_entries"
-            android:textColor="@color/white"
-            android:buttonTint="@color/white"
+            android:textColor="@color/black"
+            android:buttonTint="@color/black"
             android:textSize="12sp"
             android:layout_marginTop="10dp" />
 

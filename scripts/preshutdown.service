@@ -1,0 +1,12 @@
+[Unit]
+Description=Send Pulsar just before shutdown
+#Requires=network.target
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStop=/pulsar-scripts/preshutdown.sh
+
+[Install]
+WantedBy=multi-user.target

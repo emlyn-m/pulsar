@@ -73,7 +73,7 @@ class Home : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.navigationBarColor = getColor(R.color.black)
+        window.navigationBarColor = getColor(R.color.white)
 
         setContentView(R.layout.activity_home)
 

@@ -32,7 +32,8 @@
             android:layout_height="24dp"
             android:layout_gravity="end"
             android:layout_marginEnd="24dp"
-            android:background="@color/accent" />
+            android:background="@color/black"
+            android:backgroundTint="@color/black" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -56,7 +57,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:background="@color/white" />
+            android:background="@drawable/mask_circle"
+            android:backgroundTint="@color/black" />
 
         <TextView
             android:id="@+id/serverName"
@@ -67,7 +69,7 @@
             app:layout_constraintStart_toEndOf="@+id/serverIcon"
             android:layout_marginStart="12dp"
             android:textSize="18sp"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textStyle="bold"
             android:text="@string/server_name"
             tools:ignore="HardcodedText" />
