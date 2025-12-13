@@ -1,0 +1,9 @@
+[Unit]
+Description=Pulsar alerts for Tailnet
+
+[Service]
+Type=simple
+
+ExecStart=/pulsar-scripts/tailscale.sh
+Restart=on-failure
+RestartSec=5
