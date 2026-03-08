@@ -100,19 +100,20 @@ XMPP_PORT=5222
 <table>
     <tr valign="bottom">
         <th align="left"><code>json</code></th>
+        <th align="left">meaning</th>
         <th align="left">color</th>
     </tr>
     <tr>
-        <td><code>{sev: 0}</code></td><td><img src="https://fpoimg.com/20x20?text=text&bg_color=ff4c4c&text_color=ff4c4c" /><code>#ff4c4c</code></td>
+        <td><code>{sev: 0}</code></td><td>Fatal error</td><td><img src="https://fpoimg.com/20x20?text=text&bg_color=ff4c4c&text_color=ff4c4c" /><code>#ff4c4c</code></td>
     </tr>
     <tr>
-        <td><code>{sev: 1}</code></td><td><img src="https://fpoimg.com/20x20?text=text&bg_color=ff864e&text_color=ff864e" /><code>#ff864e</code></td>
+        <td><code>{sev: 1}</code></td><td>Error</td><td><img src="https://fpoimg.com/20x20?text=text&bg_color=ff864e&text_color=ff864e" /><code>#ff864e</code></td>
     </tr><tr>
-        <td><code>{sev: 3}</code></td><td><img src="https://fpoimg.com/20x20?text=text&bg_color=e5e564&text_color=e5e564" /><code>#e5e564</code></td>
+        <td><code>{sev: 3}</code></td><td>Warning</td><td><img src="https://fpoimg.com/20x20?text=text&bg_color=e5e564&text_color=e5e564" /><code>#e5e564</code></td>
     </tr><tr>
-        <td><code>{sev: 4}</code></td><td><img src="https://fpoimg.com/20x20?text=text&bg_color=7df9ff&text_color=7df9ff" /><code>#7df9ff</code></td>
+        <td><code>{sev: 4}</code></td><td>Information</td><td><img src="https://fpoimg.com/20x20?text=text&bg_color=7df9ff&text_color=7df9ff" /><code>#7df9ff</code></td>
     </tr><tr>
-        <td><code>{sev: 6}</code></td><td><img src="https://fpoimg.com/20x20?text=text&bg_color=bb86fc&text_color=bb86fc" /><code>#bb86fc</code></td>
+        <td><code>{sev: 6}</code></td><td>Debug</td><td><img src="https://fpoimg.com/20x20?text=text&bg_color=bb86fc&text_color=bb86fc" /><code>#bb86fc</code></td>
     </tr>
 </table>
   
